@@ -1,0 +1,48 @@
+.alGSlider {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.alGSlider__slide {
+    display: inline-block;
+    width: 100%;
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+    .alGSlider__slide--hidden {
+        display: none;
+    }
+
+.alGSlider__slide-content {
+    display: block;
+    height: 100%;
+}
+
+.alGSlider__arrow-left,
+.alGSlider__arrow-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: block;
+    width: 0;
+    height: 0;
+    margin: auto 0;
+    padding: 0;
+    border-style: solid;
+    outline: none;
+    z-index: 1;
+    cursor: pointer;
+}
+.alGSlider__arrow-left {
+    left: 0;
+    border-width: 15px 20px 15px 0;
+    border-color: transparent #22dd33 transparent transparent;
+}
+.alGSlider__arrow-right {
+    right: 0;
+    border-width: 15px 0 15px 20px;
+    border-color: transparent transparent transparent #22dd33;
+}

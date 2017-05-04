@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -97,9 +97,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _SlideCreator = __webpack_require__(4);
+var _SlideCreator = __webpack_require__(6);
 
-var _createBreadcrumbs = __webpack_require__(5);
+var _createBreadcrumbs = __webpack_require__(7);
 
 var _createBreadcrumbs2 = _interopRequireDefault(_createBreadcrumbs);
 
@@ -238,114 +238,6 @@ if(false) {
 "use strict";
 
 
-var _SliderConstructor = __webpack_require__(1);
-
-var _SliderConstructor2 = _interopRequireDefault(_SliderConstructor);
-
-__webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-window.AlGSlider = function (id, arr) {
-  return new _SliderConstructor2.default(id).create(arr);
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createSlidesByURL = createSlidesByURL;
-exports.createSlidesFromChildren = createSlidesFromChildren;
-
-var _constants = __webpack_require__(0);
-
-function createSlidesByURL(arrUrl) {
-    return arrUrl.map(function (url, key) {
-        var divElem = document.createElement('div'),
-            imgElem = document.createElement('img');
-
-        imgElem.setAttribute('src', url);
-        imgElem.classList.add(_constants.CLASS_SLIDE_ITEM);
-
-        if (key === 0) {
-            divElem.classList.add(_constants.CLASS_SLIDE);
-        } else {
-            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
-        }
-
-        divElem.appendChild(imgElem);
-
-        return divElem;
-    });
-}
-
-function createSlidesFromChildren(nodes) {
-    return Array.prototype.map.call(nodes, function (node, key) {
-        var divElem = document.createElement('div');
-
-        node.classList.add(_constants.CLASS_SLIDE_ITEM);
-
-        if (key === 0) {
-            divElem.classList.add(_constants.CLASS_SLIDE);
-        } else {
-            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
-        }
-
-        divElem.appendChild(node);
-
-        return divElem;
-    });
-}
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = createBreadcrumbs;
-
-var _constants = __webpack_require__(0);
-
-function createBreadcrumbs(amount) {
-    var divContainer = document.createElement('div');
-
-    for (var i = 0; i < amount; i++) {
-        var point = document.createElement('div');
-
-        if (i === 0) {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM, _constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        } else {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM);
-        }
-
-        point.setAttribute('data-key', i);
-
-        divContainer.appendChild(point);
-    }
-
-    divContainer.classList.add(_constants.CLASS_BREADCRUMBS);
-
-    return divContainer;
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 /*
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
@@ -422,7 +314,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 7 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -517,10 +409,118 @@ module.exports = function (css) {
 };
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _SliderConstructor = __webpack_require__(1);
+
+var _SliderConstructor2 = _interopRequireDefault(_SliderConstructor);
+
+__webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.AlGSlider = function (id, arr) {
+  return new _SliderConstructor2.default(id).create(arr);
+};
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createSlidesByURL = createSlidesByURL;
+exports.createSlidesFromChildren = createSlidesFromChildren;
+
+var _constants = __webpack_require__(0);
+
+function createSlidesByURL(arrUrl) {
+    return arrUrl.map(function (url, key) {
+        var divElem = document.createElement('div'),
+            imgElem = document.createElement('img');
+
+        imgElem.setAttribute('src', url);
+        imgElem.classList.add(_constants.CLASS_SLIDE_ITEM);
+
+        if (key === 0) {
+            divElem.classList.add(_constants.CLASS_SLIDE);
+        } else {
+            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
+        }
+
+        divElem.appendChild(imgElem);
+
+        return divElem;
+    });
+}
+
+function createSlidesFromChildren(nodes) {
+    return Array.prototype.map.call(nodes, function (node, key) {
+        var divElem = document.createElement('div');
+
+        node.classList.add(_constants.CLASS_SLIDE_ITEM);
+
+        if (key === 0) {
+            divElem.classList.add(_constants.CLASS_SLIDE);
+        } else {
+            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
+        }
+
+        divElem.appendChild(node);
+
+        return divElem;
+    });
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createBreadcrumbs;
+
+var _constants = __webpack_require__(0);
+
+function createBreadcrumbs(amount) {
+    var divContainer = document.createElement('div');
+
+    for (var i = 0; i < amount; i++) {
+        var point = document.createElement('div');
+
+        if (i === 0) {
+            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM, _constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+        } else {
+            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM);
+        }
+
+        point.setAttribute('data-key', i);
+
+        divContainer.appendChild(point);
+    }
+
+    divContainer.classList.add(_constants.CLASS_BREADCRUMBS);
+
+    return divContainer;
+}
+
+/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(6)(undefined);
+exports = module.exports = __webpack_require__(3)(undefined);
 // imports
 
 
@@ -568,7 +568,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(7);
+	fixUrls = __webpack_require__(4);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {

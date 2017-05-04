@@ -12,9 +12,10 @@
     opacity: 1;
     transition: opacity 1s ease;
 }
-    .alGSlider__slide--hidden {
-        display: none;
-    }
+
+.alGSlider__slide--hidden {
+    display: none;
+}
 
 .alGSlider__slide-content {
     display: block;
@@ -36,13 +37,41 @@
     z-index: 1;
     cursor: pointer;
 }
+
 .alGSlider__arrow-left {
     left: 0;
     border-width: 15px 20px 15px 0;
     border-color: transparent #22dd33 transparent transparent;
 }
+
 .alGSlider__arrow-right {
     right: 0;
     border-width: 15px 0 15px 20px;
     border-color: transparent transparent transparent #22dd33;
+}
+
+.alGSlider__breadcrumbs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    padding-bottom: 10px;
+    z-index: 1;
+    text-align: center;
+}
+
+.alGSlider__breadcrumbs-item {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.alGSlider__breadcrumbs-item--active {
+    background: #22dd33;
 }

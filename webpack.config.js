@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './js/index',
+    entry: './lib/index',
 
     output: {
         filename: 'alGSlider.js'

@@ -1,8 +1,8 @@
 import {
     CLASS_SLIDE_ITEM,
     CLASS_SLIDE,
-    CLASS_HIDDEN
-} from './constants';
+    CLASS_SLIDE_HIDDEN
+} from '../constants/classNames';
 
 export function createSlidesByURL(arrUrl) {
     return arrUrl.map((url, key) => {
@@ -16,7 +16,7 @@ export function createSlidesByURL(arrUrl) {
         if (key === 0) {
             divElem.classList.add(CLASS_SLIDE);
         } else {
-            divElem.classList.add(CLASS_SLIDE, CLASS_HIDDEN);
+            divElem.classList.add(CLASS_SLIDE, CLASS_SLIDE_HIDDEN);
         }
 
         divElem.appendChild(imgElem);
@@ -34,7 +34,7 @@ export function createSlidesFromChildren(nodes) {
         if (key === 0) {
             divElem.classList.add(CLASS_SLIDE);
         } else {
-            divElem.classList.add(CLASS_SLIDE, CLASS_HIDDEN);
+            divElem.classList.add(CLASS_SLIDE, CLASS_SLIDE_HIDDEN);
         }
 
         divElem.appendChild(node);

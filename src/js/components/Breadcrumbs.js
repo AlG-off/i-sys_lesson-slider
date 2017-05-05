@@ -2,7 +2,7 @@ import {
     CLASS_BREADCRUMBS,
     CLASS_BREADCRUMBS_ITEM,
     CLASS_BREADCRUMBS_ITEM_ACTIVE
-} from './constants';
+} from '../constants/classNames';
 
 export default function createBreadcrumbs(amount) {
     const divContainer = document.createElement('div');

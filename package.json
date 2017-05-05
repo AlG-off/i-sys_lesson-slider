@@ -5,9 +5,7 @@
   "author": "Aleksey Gerasimov <a.gerasimov@i-sys.ru>",
   "main": "index.js",
   "scripts": {
-    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
-    "start": "http-server",
-    "webpack": "webpack"
+    "start": "webpack"
   },
   "dependencies": {
     "babel-core": "^6.7.2"

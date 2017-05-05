@@ -81,7 +81,7 @@ var CLASS_SLIDER = exports.CLASS_SLIDER = 'alGSlider',
     CLASS_SLIDE_ITEM = exports.CLASS_SLIDE_ITEM = 'alGSlider__slide-item',
     CLASS_ARROW_LEFT = exports.CLASS_ARROW_LEFT = 'alGSlider__arrow-left',
     CLASS_ARROW_RIGHT = exports.CLASS_ARROW_RIGHT = 'alGSlider__arrow-right',
-    CLASS_HIDDEN = exports.CLASS_HIDDEN = 'alGSlider__slide--hidden',
+    CLASS_SLIDE_HIDDEN = exports.CLASS_SLIDE_HIDDEN = 'alGSlider__slide--hidden',
     CLASS_BREADCRUMBS = exports.CLASS_BREADCRUMBS = 'alGSlider__breadcrumbs',
     CLASS_BREADCRUMBS_ITEM = exports.CLASS_BREADCRUMBS_ITEM = 'alGSlider__breadcrumbs-item',
     CLASS_BREADCRUMBS_ITEM_ACTIVE = exports.CLASS_BREADCRUMBS_ITEM_ACTIVE = 'alGSlider__breadcrumbs-item--active';
@@ -97,11 +97,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _SlideCreator = __webpack_require__(6);
+var _slides = __webpack_require__(8);
 
-var _createBreadcrumbs = __webpack_require__(7);
+var _breadcrumbs = __webpack_require__(7);
 
-var _createBreadcrumbs2 = _interopRequireDefault(_createBreadcrumbs);
+var _breadcrumbs2 = _interopRequireDefault(_breadcrumbs);
+
+var _arrow = __webpack_require__(6);
+
+var _arrow2 = _interopRequireDefault(_arrow);
 
 var _constants = __webpack_require__(0);
 
@@ -111,25 +115,23 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SliderConstructor = function SliderConstructor(containerId) {
+var Slider = function Slider(rootContainerId) {
     var _this = this;
 
-    _classCallCheck(this, SliderConstructor);
+    _classCallCheck(this, Slider);
 
-    this.create = function (arrUrl) {
+    this.create = function (option) {
         var slider = document.createElement('div'),
-            childrenElem = _this.container.children,
-            arrowLeft = document.createElement('button'),
-            arrowRight = document.createElement('button');
+            childrenElem = _this.rootContainer.children;
 
         var navigation = null;
 
         if (arrUrl && arrUrl.length) {
-            _this._slides = (0, _SlideCreator.createSlidesByURL)(arrUrl);
-            navigation = (0, _createBreadcrumbs2.default)(arrUrl.length);
+            _this._slides = (0, _slides.createSlidesByURL)(arrUrl);
+            navigation = (0, _breadcrumbs2.default)(arrUrl.length);
         } else {
-            _this._slides = (0, _SlideCreator.createSlidesFromChildren)(childrenElem);
-            navigation = (0, _createBreadcrumbs2.default)(childrenElem.length);
+            _this._slides = (0, _slides.createSlidesFromChildren)(childrenElem);
+            navigation = (0, _breadcrumbs2.default)(childrenElem.length);
         }
 
         _this._breadcrumbs = navigation.children;
@@ -144,7 +146,7 @@ var SliderConstructor = function SliderConstructor(containerId) {
         slider.classList.add(_constants.CLASS_SLIDER);
         slider.append.apply(slider, _toConsumableArray(_this._slides).concat([navigation, arrowLeft, arrowRight]));
 
-        _this.container.appendChild(slider);
+        _this.rootContainer.appendChild(slider);
     };
 
     this.prevSlide = function (event) {
@@ -192,13 +194,13 @@ var SliderConstructor = function SliderConstructor(containerId) {
         _this._slides[_this._currentSlide].classList.remove(_constants.CLASS_HIDDEN);
     };
 
-    this.container = document.getElementById(containerId);
+    this.rootContainer = document.getElementById(rootContainerId);
     this._currentSlide = 0;
     this._slides = null;
     this._breadcrumbs = null;
 };
 
-exports.default = SliderConstructor;
+exports.default = Slider;
 
 /***/ }),
 /* 2 */
@@ -207,7 +209,7 @@ exports.default = SliderConstructor;
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(8);
+var content = __webpack_require__(9);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -215,7 +217,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -423,12 +425,63 @@ __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-window.AlGSlider = function (id, arr) {
-  return new _SliderConstructor2.default(id).create(arr);
+window.alGSlider = function (id, options) {
+  return new _SliderConstructor2.default(id).create(options);
 };
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createArrow = createArrow;
+function createArrow(direction) {
+    var arrow = document.createElement('button');
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createBreadcrumbs;
+
+var _constants = __webpack_require__(0);
+
+function createBreadcrumbs(amount) {
+    var divContainer = document.createElement('div');
+
+    for (var i = 0; i < amount; i++) {
+        var point = document.createElement('div');
+
+        if (i === 0) {
+            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM, _constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+        } else {
+            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM);
+        }
+
+        point.setAttribute('data-key', i);
+
+        divContainer.appendChild(point);
+    }
+
+    divContainer.classList.add(_constants.CLASS_BREADCRUMBS);
+
+    return divContainer;
+}
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -481,43 +534,7 @@ function createSlidesFromChildren(nodes) {
 }
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = createBreadcrumbs;
-
-var _constants = __webpack_require__(0);
-
-function createBreadcrumbs(amount) {
-    var divContainer = document.createElement('div');
-
-    for (var i = 0; i < amount; i++) {
-        var point = document.createElement('div');
-
-        if (i === 0) {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM, _constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        } else {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM);
-        }
-
-        point.setAttribute('data-key', i);
-
-        divContainer.appendChild(point);
-    }
-
-    divContainer.classList.add(_constants.CLASS_BREADCRUMBS);
-
-    return divContainer;
-}
-
-/***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(3)(undefined);
@@ -525,13 +542,13 @@ exports = module.exports = __webpack_require__(3)(undefined);
 
 
 // module
-exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    display: inline-block;\r\n    width: 100%;\r\n    opacity: 1;\r\n    transition: opacity 1s ease;\r\n}\r\n\r\n.alGSlider__slide--hidden {\r\n    display: none;\r\n}\r\n\r\n.alGSlider__slide-content {\r\n    display: block;\r\n    height: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 0;\r\n    height: 0;\r\n    margin: auto 0;\r\n    padding: 0;\r\n    border-style: solid;\r\n    outline: none;\r\n    z-index: 1;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n    border-width: 15px 20px 15px 0;\r\n    border-color: transparent #22dd33 transparent transparent;\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n    border-width: 15px 0 15px 20px;\r\n    border-color: transparent transparent transparent #22dd33;\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 1;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}", ""]);
+exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    display: inline-block;\r\n    width: 100%;\r\n    opacity: 1;\r\n    transition: opacity 1s ease;\r\n}\r\n\r\n.alGSlider__slide--hidden {\r\n    display: none;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 1;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 0;\r\n    height: 0;\r\n    margin: auto 0;\r\n    padding: 0;\r\n    border-style: solid;\r\n    outline: none;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n    border-width: 15px 20px 15px 0;\r\n    border-color: transparent #22dd33 transparent transparent;\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n    border-width: 15px 0 15px 20px;\r\n    border-color: transparent transparent transparent #22dd33;\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 1;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}", ""]);
 
 // exports
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*

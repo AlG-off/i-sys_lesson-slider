@@ -1,5 +1,5 @@
-import SliderConstructor from './js/SliderConstructor';
+import Slider from './js/container/Slider';
 import './css/index.css';
 
-window.AlGSlider = (id, arr) => new SliderConstructor(id).create(arr);
+window.alGSlider = (id, options) => new Slider(id).create(options);
 

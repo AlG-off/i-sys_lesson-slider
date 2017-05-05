@@ -18,13 +18,14 @@
     display: none;
 }
 
-.alGSlider__slide-content {
+.alGSlider__slide-item {
     display: block;
     height: 100%;
 }
 
 .alGSlider__arrow-left,
 .alGSlider__arrow-right {
+    z-index: 1;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -35,7 +36,6 @@
     padding: 0;
     border-style: solid;
     outline: none;
-    z-index: 1;
     cursor: pointer;
 }
 

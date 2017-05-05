@@ -1,26 +1,18 @@
-import {createSlidesByURL, createSlidesFromChildren} from './SlideCreator';
-import createBreadcrumbs  from './createBreadcrumbs';
+import elementsBuilder from '../elementsBuilder';
+import * as action from '../actions/actions';
 
-import {
-    CLASS_SLIDER,
-    CLASS_ARROW_LEFT,
-    CLASS_ARROW_RIGHT,
-    CLASS_HIDDEN,
-    CLASS_BREADCRUMBS_ITEM_ACTIVE
-} from './constants';
 
-export default class SliderConstructor {
-    constructor(containerId) {
-        this.container = document.getElementById(containerId);
+
+export default class Slider {
+    constructor(rootContainerId) {
+        this.rootContainer = document.getElementById(rootContainerId);
         this._currentSlide = 0;
-        this._slides = null;
-        this._breadcrumbs = null;
     }
 
-    create = arrUrl => {
+    create = options => {
         const
-            slider = document.createElement('div'),
-            childrenElem = this.container.children,
+            container = elementsBuilder(action.createContainer()),
+            childrenElem = this.rootContainer.children,
             arrowLeft = document.createElement('button'),
             arrowRight = document.createElement('button');
 
@@ -43,13 +35,13 @@ export default class SliderConstructor {
         arrowRight.addEventListener('click', this.nextSlide, false);
         navigation.addEventListener('click', this.selectSlide, false);
 
-        slider.classList.add(CLASS_SLIDER);
-        slider.append(...this._slides, navigation, arrowLeft, arrowRight);
 
-        this.container.appendChild(slider);
+        container.append(...this._slides, navigation, arrowLeft, arrowRight);
+
+        this.rootContainer.appendChild(container);
     };
 
-    prevSlide = event => {
+/*    prevSlide = event => {
         event.preventDefault();
 
         this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
@@ -92,5 +84,5 @@ export default class SliderConstructor {
 
         this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);
         this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-    }
+    }*/
 }

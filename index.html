@@ -10,20 +10,19 @@
     <script src="alGSlider.js"></script>
 </head>
 <body>
-    <div id="slider"></div>
+    <div id="sliderURL"></div>
+    <div id="sliderNodes"></div>
 
 
     <script>
         const arrUrlImg = [
-            './img/img (1).jpg',
-            './img/img (2).jpg',
-            './img/img (3).jpg',
-            './img/img (4).jpg',
-            './img/img (5).jpg',
-            './img/img (6).jpg'
+            'http://s.spynet.ru/uploads/images/0/7/0/0/0/2/2011/08/01/16c5d9.jpg',
+            'http://s.spynet.ru/uploads/images/0/7/0/0/0/2/2011/08/01/7872e5.jpg',
+            'http://for-css.ru/_ld/69/6980.jpg',
+            'https://wpapers.ru/wallpapers/Insects/Butterflies/5453/PREV_%D0%91%D0%B0%D0%B1%D0%BE%D1%87%D0%BA%D0%B0.jpg',
         ];
 
-        AlGSlider('slider', arrUrlImg);
+        alGSlider('sliderURL', {arrayURL:arrUrlImg});
     </script>
 </body>
 </html>

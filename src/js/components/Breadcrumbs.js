@@ -4,8 +4,8 @@ import {
     CLASS_BREADCRUMBS_ITEM_ACTIVE
 } from '../constants/classNames';
 
-export default function createBreadcrumbs(amount) {
-    const divContainer = document.createElement('div');
+export default function createBreadcrumbs(amount, listener) {
+    const breadcrumbsContainer = document.createElement('div');
 
     for (let i = 0; i < amount; i++) {
         const point = document.createElement('div');
@@ -18,10 +18,11 @@ export default function createBreadcrumbs(amount) {
 
         point.setAttribute('data-key', i);
 
-        divContainer.appendChild(point);
+        breadcrumbsContainer.appendChild(point);
     }
 
-    divContainer.classList.add(CLASS_BREADCRUMBS);
+    breadcrumbsContainer.classList.add(CLASS_BREADCRUMBS);
+    breadcrumbsContainer.addEventListener('click', listener, false);
 
-    return divContainer;
+    return breadcrumbsContainer;
 }

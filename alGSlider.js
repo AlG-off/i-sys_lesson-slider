@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -96,18 +96,45 @@ var CLASS_SLIDER = exports.CLASS_SLIDER = 'alGSlider',
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var CREATE_ARROWS = exports.CREATE_ARROWS = 'CREATE_ARROWS',
+    CREATE_MAIN_CONTAINER = exports.CREATE_MAIN_CONTAINER = 'CREATE_MAIN_CONTAINER',
+    CREATE_SLIDES = exports.CREATE_SLIDES = 'CREATE_SLIDES',
+    CREATE_BREADCRUMBS = exports.CREATE_BREADCRUMBS = 'CREATE_BREADCRUMBS',
+    CREATE_DATA_NOT_FOUND = exports.CREATE_DATA_NOT_FOUND = 'CREATE_DATA_NOT_FOUND',
+    SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS',
+    SET_SLIDES = exports.SET_SLIDES = 'SET_SLIDES',
+    SET_BREADCRUMBS = exports.SET_BREADCRUMBS = 'SET_BREADCRUMBS';
 
-var _slides = __webpack_require__(8);
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var _breadcrumbs = __webpack_require__(7);
+"use strict";
 
-var _breadcrumbs2 = _interopRequireDefault(_breadcrumbs);
 
-var _arrow = __webpack_require__(6);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-var _arrow2 = _interopRequireDefault(_arrow);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _constants = __webpack_require__(0);
+var _Store = __webpack_require__(14);
+
+var _Store2 = _interopRequireDefault(_Store);
+
+var _updateState = __webpack_require__(15);
+
+var _updateState2 = _interopRequireDefault(_updateState);
+
+var _elementsBuilder = __webpack_require__(13);
+
+var _elementsBuilder2 = _interopRequireDefault(_elementsBuilder);
+
+var _actions = __webpack_require__(7);
+
+var action = _interopRequireWildcard(_actions);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -115,101 +142,97 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Slider = function Slider(rootContainerId) {
-    var _this = this;
+var store = new _Store2.default(_updateState2.default);
 
-    _classCallCheck(this, Slider);
+var Slider = function () {
+    function Slider(rootContainerId) {
+        _classCallCheck(this, Slider);
 
-    this.create = function (option) {
-        var slider = document.createElement('div'),
-            childrenElem = _this.rootContainer.children;
+        this.prevSlide = function (event) {
+            event.preventDefault();
+            console.log('click');
+            /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
+             this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
+             this._currentSlide--;
+               if (this._currentSlide < 0) {
+             this._currentSlide = this._slides.length - 1
+             }
+               this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
+             this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+        };
 
-        var navigation = null;
+        this.nextSlide = function (event) {
+            event.preventDefault();
+            console.log('click');
+            /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
+             this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
+             this._currentSlide++;
+               if (this._currentSlide > this._slides.length - 1) {
+             this._currentSlide = 0
+             }
+               this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
+             this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+        };
 
-        if (arrUrl && arrUrl.length) {
-            _this._slides = (0, _slides.createSlidesByURL)(arrUrl);
-            navigation = (0, _breadcrumbs2.default)(arrUrl.length);
-        } else {
-            _this._slides = (0, _slides.createSlidesFromChildren)(childrenElem);
-            navigation = (0, _breadcrumbs2.default)(childrenElem.length);
+        this.rootContainer = document.getElementById(rootContainerId);
+    }
+
+    _createClass(Slider, [{
+        key: 'create',
+
+
+        /*    selectSlide = event => {
+         event.preventDefault();
+         const numTargetElem = event.target.dataset.key;
+         console.log('click', numTargetElem);
+         if (isNaN(numTargetElem)) return;
+           this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
+         this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
+           this._currentSlide = numTargetElem;
+           this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);
+         this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
+         }*/
+        value: function create() {
+            var userOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            store.update(action.setOptions(userOptions));
+
+            var options = store.state.options,
+                container = (0, _elementsBuilder2.default)(action.createMainContainer()),
+                slidesContent = Array.prototype.concat(options.urls, this.rootContainer.children),
+                arrowData = [{
+                direction: 'left',
+                listener: this.prevSlide
+            }, {
+                direction: 'right',
+                listener: this.nextSlide
+            }],
+                slides = slidesContent.length ? (0, _elementsBuilder2.default)(action.createSlides(slidesContent)) : (0, _elementsBuilder2.default)(action.createDataNotFound()),
+                breadcrumbs = options.breadcrumbs ? (0, _elementsBuilder2.default)(action.createBreadcrumbs(slides.length)) : [],
+                arrows = options.controls ? (0, _elementsBuilder2.default)(action.createArrows(arrowData)) : [];
+
+
+            store.update(action.setSlides(slides));
+            store.update(action.setBreadcrumbs());
+
+            container.append.apply(container, _toConsumableArray(Array.prototype.concat(slides, breadcrumbs, arrows)));
+            this.rootContainer.appendChild(container);
         }
+    }]);
 
-        _this._breadcrumbs = navigation.children;
-
-        arrowLeft.classList.add(_constants.CLASS_ARROW_LEFT);
-        arrowRight.classList.add(_constants.CLASS_ARROW_RIGHT);
-
-        arrowLeft.addEventListener('click', _this.prevSlide, false);
-        arrowRight.addEventListener('click', _this.nextSlide, false);
-        navigation.addEventListener('click', _this.selectSlide, false);
-
-        slider.classList.add(_constants.CLASS_SLIDER);
-        slider.append.apply(slider, _toConsumableArray(_this._slides).concat([navigation, arrowLeft, arrowRight]));
-
-        _this.rootContainer.appendChild(slider);
-    };
-
-    this.prevSlide = function (event) {
-        event.preventDefault();
-
-        _this._slides[_this._currentSlide].classList.add(_constants.CLASS_HIDDEN);
-        _this._breadcrumbs[_this._currentSlide].classList.remove(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        _this._currentSlide--;
-
-        if (_this._currentSlide < 0) {
-            _this._currentSlide = _this._slides.length - 1;
-        }
-
-        _this._slides[_this._currentSlide].classList.remove(_constants.CLASS_HIDDEN);
-        _this._breadcrumbs[_this._currentSlide].classList.add(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-    };
-
-    this.nextSlide = function (event) {
-        event.preventDefault();
-
-        _this._slides[_this._currentSlide].classList.add(_constants.CLASS_HIDDEN);
-        _this._breadcrumbs[_this._currentSlide].classList.remove(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        _this._currentSlide++;
-
-        if (_this._currentSlide > _this._slides.length - 1) {
-            _this._currentSlide = 0;
-        }
-
-        _this._slides[_this._currentSlide].classList.remove(_constants.CLASS_HIDDEN);
-        _this._breadcrumbs[_this._currentSlide].classList.add(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-    };
-
-    this.selectSlide = function (event) {
-        event.preventDefault();
-        var numTargetElem = event.target.dataset.key;
-        console.log('click', numTargetElem);
-        if (isNaN(numTargetElem)) return;
-
-        _this._breadcrumbs[_this._currentSlide].classList.remove(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        _this._slides[_this._currentSlide].classList.add(_constants.CLASS_HIDDEN);
-
-        _this._currentSlide = numTargetElem;
-
-        _this._breadcrumbs[_this._currentSlide].classList.add(_constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        _this._slides[_this._currentSlide].classList.remove(_constants.CLASS_HIDDEN);
-    };
-
-    this.rootContainer = document.getElementById(rootContainerId);
-    this._currentSlide = 0;
-    this._slides = null;
-    this._breadcrumbs = null;
-};
+    return Slider;
+}();
 
 exports.default = Slider;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(9);
+var content = __webpack_require__(16);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -217,7 +240,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(17)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -234,7 +257,7 @@ if(false) {
 }
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -316,7 +339,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -411,38 +434,23 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _SliderConstructor = __webpack_require__(1);
-
-var _SliderConstructor2 = _interopRequireDefault(_SliderConstructor);
-
-__webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-window.alGSlider = function (id, options) {
-  return new _SliderConstructor2.default(id).create(options);
-};
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createArrow = createArrow;
-function createArrow(direction) {
-    var arrow = document.createElement('button');
-}
+var _Slider = __webpack_require__(2);
+
+var _Slider2 = _interopRequireDefault(_Slider);
+
+__webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.alGSlider = function (id, options) {
+  return new _Slider2.default(id).create(options);
+};
 
 /***/ }),
 /* 7 */
@@ -454,30 +462,60 @@ function createArrow(direction) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createBreadcrumbs;
+exports.createMainContainer = createMainContainer;
+exports.createArrows = createArrows;
+exports.createSlides = createSlides;
+exports.createBreadcrumbs = createBreadcrumbs;
+exports.createDataNotFound = createDataNotFound;
+exports.setOptions = setOptions;
+exports.setSlides = setSlides;
+exports.setBreadcrumbs = setBreadcrumbs;
 
-var _constants = __webpack_require__(0);
+var _actionTypes = __webpack_require__(1);
 
-function createBreadcrumbs(amount) {
-    var divContainer = document.createElement('div');
+var types = _interopRequireWildcard(_actionTypes);
 
-    for (var i = 0; i < amount; i++) {
-        var point = document.createElement('div');
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-        if (i === 0) {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM, _constants.CLASS_BREADCRUMBS_ITEM_ACTIVE);
-        } else {
-            point.classList.add(_constants.CLASS_BREADCRUMBS_ITEM);
-        }
+function createMainContainer() {
+    return { type: types.CREATE_MAIN_CONTAINER };
+}
 
-        point.setAttribute('data-key', i);
+function createArrows(dataArrows) {
+    return {
+        type: types.CREATE_ARROWS,
+        payload: dataArrows
+    };
+}
 
-        divContainer.appendChild(point);
-    }
+function createSlides(dataSlides) {
+    return {
+        type: types.CREATE_SLIDES,
+        payload: dataSlides
+    };
+}
 
-    divContainer.classList.add(_constants.CLASS_BREADCRUMBS);
+function createBreadcrumbs(dataBreadcrumbs) {
+    return {
+        type: types.CREATE_BREADCRUMBS,
+        payload: dataBreadcrumbs
+    };
+}
 
-    return divContainer;
+function createDataNotFound() {
+    return { type: types.CREATE_DATA_NOT_FOUND };
+}
+
+function setOptions(options) {
+    return { type: types.SET_OPTIONS, payload: options };
+}
+
+function setSlides(slides) {
+    return { type: types.SET_SLIDES, payload: slides };
+}
+
+function setBreadcrumbs(breadcrumbs) {
+    return { type: types.SET_BREADCRUMBS, payload: breadcrumbs };
 }
 
 /***/ }),
@@ -490,54 +528,326 @@ function createBreadcrumbs(amount) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.createSlidesByURL = createSlidesByURL;
-exports.createSlidesFromChildren = createSlidesFromChildren;
+exports.default = Arrows;
 
-var _constants = __webpack_require__(0);
+var _classNames = __webpack_require__(0);
 
-function createSlidesByURL(arrUrl) {
-    return arrUrl.map(function (url, key) {
-        var divElem = document.createElement('div'),
-            imgElem = document.createElement('img');
+/*
+ [
+     {
+         direction: 'left',
+         listener: function()
+     },
+     {
+         direction: 'right',
+         listener: function()
+     }
+ ]
+ */
 
-        imgElem.setAttribute('src', url);
-        imgElem.classList.add(_constants.CLASS_SLIDE_ITEM);
+function Arrows(dataArr) {
+    return dataArr.map(function (item) {
+        var direction = item.direction,
+            listener = item.listener;
 
-        if (key === 0) {
-            divElem.classList.add(_constants.CLASS_SLIDE);
-        } else {
-            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
-        }
 
-        divElem.appendChild(imgElem);
-
-        return divElem;
+        return Arrow(direction, listener);
     });
 }
 
-function createSlidesFromChildren(nodes) {
-    return Array.prototype.map.call(nodes, function (node, key) {
-        var divElem = document.createElement('div');
+function Arrow(direction, listener) {
+    var arrow = document.createElement('button'),
+        classes = direction === 'left' ? _classNames.CLASS_ARROW_LEFT : _classNames.CLASS_ARROW_RIGHT;
 
-        node.classList.add(_constants.CLASS_SLIDE_ITEM);
+    arrow.classList.add(classes);
+    arrow.addEventListener('click', listener, false);
 
-        if (key === 0) {
-            divElem.classList.add(_constants.CLASS_SLIDE);
-        } else {
-            divElem.classList.add(_constants.CLASS_SLIDE, _constants.CLASS_HIDDEN);
-        }
-
-        divElem.appendChild(node);
-
-        return divElem;
-    });
+    return arrow;
 }
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(3)(undefined);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = createBreadcrumbs;
+
+var _classNames = __webpack_require__(0);
+
+function createBreadcrumbs(amount, listener) {
+    var breadcrumbsContainer = document.createElement('div');
+
+    for (var i = 0; i < amount; i++) {
+        var point = document.createElement('div');
+
+        if (i === 0) {
+            point.classList.add(_classNames.CLASS_BREADCRUMBS_ITEM, _classNames.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+        } else {
+            point.classList.add(_classNames.CLASS_BREADCRUMBS_ITEM);
+        }
+
+        point.setAttribute('data-key', i);
+
+        breadcrumbsContainer.appendChild(point);
+    }
+
+    breadcrumbsContainer.classList.add(_classNames.CLASS_BREADCRUMBS);
+    breadcrumbsContainer.addEventListener('click', listener, false);
+
+    return breadcrumbsContainer;
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DataNotFound;
+function DataNotFound() {
+    var divElem = document.createElement('div');
+
+    divElem.textContent = 'Нет данных для отображения';
+
+    return divElem;
+}
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Container;
+
+var _classNames = __webpack_require__(0);
+
+function Container() {
+    var container = document.createElement('div');
+
+    container.classList.add(_classNames.CLASS_SLIDER);
+
+    return container;
+}
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = Slides;
+
+var _classNames = __webpack_require__(0);
+
+function Slides(dataArr) {
+    return Array.prototype.map.call(dataArr, function (item, key) {
+        return Slide(item, key);
+    });
+}
+
+function Slide(item, key) {
+    var divContainer = document.createElement('div');
+
+    var content = null;
+
+    if (key === 0) {
+        divContainer.classList.add(_classNames.CLASS_SLIDE);
+    } else {
+        divContainer.classList.add(_classNames.CLASS_SLIDE, _classNames.CLASS_SLIDE_HIDDEN);
+    }
+
+    divContainer.setAttribute('data-key', key);
+
+    if (item.nodeType) {
+        content = item;
+    } else {
+        content = document.createElement('img');
+        content.setAttribute('src', item);
+    }
+
+    content.classList.add(_classNames.CLASS_SLIDE_ITEM);
+
+    divContainer.appendChild(content);
+
+    return divContainer;
+}
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = elementsBuilder;
+
+var _MainContainer = __webpack_require__(11);
+
+var _MainContainer2 = _interopRequireDefault(_MainContainer);
+
+var _Slides = __webpack_require__(12);
+
+var _Slides2 = _interopRequireDefault(_Slides);
+
+var _Arrows = __webpack_require__(8);
+
+var _Arrows2 = _interopRequireDefault(_Arrows);
+
+var _Breadcrumbs = __webpack_require__(9);
+
+var _Breadcrumbs2 = _interopRequireDefault(_Breadcrumbs);
+
+var _DataNotFound = __webpack_require__(10);
+
+var _DataNotFound2 = _interopRequireDefault(_DataNotFound);
+
+var _actionTypes = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function elementsBuilder(action) {
+    switch (action.type) {
+        case _actionTypes.CREATE_MAIN_CONTAINER:
+            return (0, _MainContainer2.default)();
+        case _actionTypes.CREATE_SLIDES:
+            return (0, _Slides2.default)(action.payload);
+        case _actionTypes.CREATE_ARROWS:
+            return (0, _Arrows2.default)(action.payload);
+        case _actionTypes.CREATE_BREADCRUMBS:
+            return (0, _Breadcrumbs2.default)(action.payload);
+        case _actionTypes.CREATE_DATA_NOT_FOUND:
+        default:
+            return (0, _DataNotFound2.default)();
+    }
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Store = function () {
+    function Store(updateState, state) {
+        _classCallCheck(this, Store);
+
+        this._updateState = updateState;
+        this._state = state;
+        this._callbacks = [];
+    }
+
+    _createClass(Store, [{
+        key: "update",
+        value: function update(action) {
+            this._state = this._updateState(this._state, action);
+            this._callbacks.forEach(function (callback) {
+                return callback();
+            });
+        }
+    }, {
+        key: "subscribe",
+        value: function subscribe(callback) {
+            this._callbacks.push(callback);
+        }
+    }, {
+        key: "state",
+        get: function get() {
+            return this._state;
+        }
+    }]);
+
+    return Store;
+}();
+
+exports.default = Store;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.default = updateState;
+
+var _actionTypes = __webpack_require__(1);
+
+var initialState = {
+    slides: null,
+    breadcrumbs: null,
+    currentSlide: 0,
+    options: {
+        urls: [],
+        breadcrumbs: true,
+        controls: true,
+        delay: 0,
+        transition: 'liner'
+    }
+};
+
+function updateState() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _actionTypes.SET_OPTIONS:
+            return _extends({}, state, {
+                options: _extends({}, state.options, action.payload)
+            });
+        case _actionTypes.SET_SLIDES:
+            return _extends({}, state, {
+                slides: action.payload
+            });
+        case _actionTypes.SET_BREADCRUMBS:
+            return _extends({}, state, {
+                breadcrumbs: action.payload
+            });
+        default:
+            return state;
+    }
+}
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(undefined);
 // imports
 
 
@@ -548,7 +858,7 @@ exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display:
 
 
 /***/ }),
-/* 10 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -585,7 +895,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(4);
+	fixUrls = __webpack_require__(5);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {

@@ -16,7 +16,7 @@ import {
 export default function elementsBuilder(action) {
     switch (action.type) {
         case CREATE_MAIN_CONTAINER:
-            return MainContainer();
+            return MainContainer(action.payload);
         case CREATE_SLIDES:
             return Slides(action.payload);
         case CREATE_ARROWS:

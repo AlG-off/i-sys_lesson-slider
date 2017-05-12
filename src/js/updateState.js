@@ -1,13 +1,17 @@
 import {
     SET_OPTIONS,
     SET_SLIDES,
-    SET_BREADCRUMBS
+    SET_BREADCRUMBS,
+    DISPLAY_SLIDE,
+    SET_TIMER
 } from './constants/actionTypes';
 
 const initialState = {
     slides: null,
     breadcrumbs: null,
+    timer: null,
     currentSlide: 0,
+    prevSlide: 0,
     options: {
         urls: [],
         breadcrumbs: true,
@@ -18,6 +22,7 @@ const initialState = {
 };
 
 export default function updateState(state = initialState, action) {
+    console.log('action.type', action.type, 'action.payload', action.payload);
     switch (action.type) {
         case SET_OPTIONS:
             return {
@@ -36,6 +41,17 @@ export default function updateState(state = initialState, action) {
             return {
                 ...state,
                 breadcrumbs: action.payload
+            };
+        case DISPLAY_SLIDE:
+            return {
+                ...state,
+                prevSlide: state.currentSlide,
+                currentSlide: action.payload
+            };
+        case SET_TIMER:
+            return {
+                ...state,
+                timer: action.payload
             };
         default:
             return state;

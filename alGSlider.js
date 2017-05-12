@@ -103,7 +103,9 @@ var CREATE_ARROWS = exports.CREATE_ARROWS = 'CREATE_ARROWS',
     CREATE_DATA_NOT_FOUND = exports.CREATE_DATA_NOT_FOUND = 'CREATE_DATA_NOT_FOUND',
     SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS',
     SET_SLIDES = exports.SET_SLIDES = 'SET_SLIDES',
-    SET_BREADCRUMBS = exports.SET_BREADCRUMBS = 'SET_BREADCRUMBS';
+    SET_BREADCRUMBS = exports.SET_BREADCRUMBS = 'SET_BREADCRUMBS',
+    DISPLAY_SLIDE = exports.DISPLAY_SLIDE = 'DISPLAY_SLIDE',
+    SET_TIMER = exports.SET_TIMER = 'SET_TIMER';
 
 /***/ }),
 /* 2 */
@@ -122,10 +124,6 @@ var _Store = __webpack_require__(14);
 
 var _Store2 = _interopRequireDefault(_Store);
 
-var _updateState = __webpack_require__(15);
-
-var _updateState2 = _interopRequireDefault(_updateState);
-
 var _elementsBuilder = __webpack_require__(13);
 
 var _elementsBuilder2 = _interopRequireDefault(_elementsBuilder);
@@ -133,6 +131,10 @@ var _elementsBuilder2 = _interopRequireDefault(_elementsBuilder);
 var _actions = __webpack_require__(7);
 
 var action = _interopRequireWildcard(_actions);
+
+var _classNames = __webpack_require__(0);
+
+var classes = _interopRequireWildcard(_classNames);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -142,36 +144,86 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var store = new _Store2.default(_updateState2.default);
-
 var Slider = function () {
     function Slider(rootContainerId) {
+        var _this = this;
+
         _classCallCheck(this, Slider);
 
         this.prevSlide = function (event) {
-            event.preventDefault();
-            console.log('click');
-            /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
-             this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-             this._currentSlide--;
-               if (this._currentSlide < 0) {
-             this._currentSlide = this._slides.length - 1
-             }
-               this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-             this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+            event && event.preventDefault();
+
+            var _store$state = _Store2.default.state,
+                currentSlide = _store$state.currentSlide,
+                slides = _store$state.slides,
+                targetSlide = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
+
+
+            _Store2.default.update(action.displaySlide(targetSlide));
         };
 
         this.nextSlide = function (event) {
-            event.preventDefault();
-            console.log('click');
-            /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
-             this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-             this._currentSlide++;
-               if (this._currentSlide > this._slides.length - 1) {
-             this._currentSlide = 0
-             }
-               this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-             this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+            event && event.preventDefault();
+
+            var _store$state2 = _Store2.default.state,
+                currentSlide = _store$state2.currentSlide,
+                slides = _store$state2.slides,
+                targetSlide = currentSlide + 1 < slides.length ? currentSlide + 1 : 0;
+
+
+            _Store2.default.update(action.displaySlide(targetSlide));
+        };
+
+        this.selectSlide = function (event) {
+            event && event.preventDefault();
+
+            var targetSlide = parseInt(event.target.dataset.key, 10);
+
+            if (isNaN(targetSlide)) return;
+
+            _Store2.default.update(action.displaySlide(targetSlide));
+        };
+
+        this.displaySlide = function () {
+            var _store$state3 = _Store2.default.state,
+                currentSlide = _store$state3.currentSlide,
+                prevSlide = _store$state3.prevSlide,
+                slides = _store$state3.slides,
+                breadcrumbs = _store$state3.breadcrumbs,
+                options = _store$state3.options;
+
+
+            slides[prevSlide].classList.add(classes.CLASS_SLIDE_HIDDEN);
+            slides[currentSlide].classList.remove(classes.CLASS_SLIDE_HIDDEN);
+
+            if (options.breadcrumbs) {
+                breadcrumbs[prevSlide].classList.remove(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+                breadcrumbs[currentSlide].classList.add(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+            }
+        };
+
+        this.run = function (stopEvent) {
+            var delay = _Store2.default.state.options.delay,
+                self = _this;
+
+
+            if (!delay) return;
+
+            if (stopEvent === 'stop') {
+                var timer = _Store2.default.state.timer;
+
+                clearTimeout(timer);
+                _Store2.default.update(action.setTimer(null));
+                return;
+            }
+
+            var timerId = setTimeout(function run() {
+                timerId = setTimeout(run, delay);
+                self.nextSlide();
+                _Store2.default.update(action.setTimer(timerId));
+            }, delay);
+
+            _Store2.default.update(action.setTimer(timerId));
         };
 
         this.rootContainer = document.getElementById(rootContainerId);
@@ -179,27 +231,16 @@ var Slider = function () {
 
     _createClass(Slider, [{
         key: 'create',
-
-
-        /*    selectSlide = event => {
-         event.preventDefault();
-         const numTargetElem = event.target.dataset.key;
-         console.log('click', numTargetElem);
-         if (isNaN(numTargetElem)) return;
-           this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-         this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
-           this._currentSlide = numTargetElem;
-           this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-         this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-         }*/
         value: function create() {
             var userOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-            store.update(action.setOptions(userOptions));
+            _Store2.default.update(action.setOptions(userOptions));
 
-            var options = store.state.options,
-                container = (0, _elementsBuilder2.default)(action.createMainContainer()),
-                slidesContent = Array.prototype.concat(options.urls, this.rootContainer.children),
+            var noop = [],
+                options = _Store2.default.state.options,
+                urls = options.urls.length ? options.urls : noop,
+                elemsRootContainer = Array.prototype.slice.call(this.rootContainer.children),
+                slidesContent = Array.prototype.concat(urls, elemsRootContainer),
                 arrowData = [{
                 direction: 'left',
                 listener: this.prevSlide
@@ -207,16 +248,28 @@ var Slider = function () {
                 direction: 'right',
                 listener: this.nextSlide
             }],
+                breadcrumbsData = {
+                amount: slidesContent.length,
+                listener: this.selectSlide
+            };
+
+
+            var container = (0, _elementsBuilder2.default)(action.createMainContainer({ listener: this.run })),
                 slides = slidesContent.length ? (0, _elementsBuilder2.default)(action.createSlides(slidesContent)) : (0, _elementsBuilder2.default)(action.createDataNotFound()),
-                breadcrumbs = options.breadcrumbs ? (0, _elementsBuilder2.default)(action.createBreadcrumbs(slides.length)) : [],
-                arrows = options.controls ? (0, _elementsBuilder2.default)(action.createArrows(arrowData)) : [];
+                breadcrumbs = options.breadcrumbs ? (0, _elementsBuilder2.default)(action.createBreadcrumbs(breadcrumbsData)) : noop,
+                arrows = options.controls ? (0, _elementsBuilder2.default)(action.createArrows(arrowData)) : noop;
 
-
-            store.update(action.setSlides(slides));
-            store.update(action.setBreadcrumbs());
+            _Store2.default.update(action.setSlides(slides));
+            _Store2.default.update(action.setBreadcrumbs(breadcrumbs.children));
+            _Store2.default.subscribe(function () {
+                console.log('currentSlide ' + _Store2.default.state.currentSlide + ', prevSlide ' + _Store2.default.state.prevSlide);
+            });
+            _Store2.default.subscribe(this.displaySlide);
 
             container.append.apply(container, _toConsumableArray(Array.prototype.concat(slides, breadcrumbs, arrows)));
             this.rootContainer.appendChild(container);
+
+            this.run();
         }
     }]);
 
@@ -470,6 +523,8 @@ exports.createDataNotFound = createDataNotFound;
 exports.setOptions = setOptions;
 exports.setSlides = setSlides;
 exports.setBreadcrumbs = setBreadcrumbs;
+exports.displaySlide = displaySlide;
+exports.setTimer = setTimer;
 
 var _actionTypes = __webpack_require__(1);
 
@@ -477,8 +532,11 @@ var types = _interopRequireWildcard(_actionTypes);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function createMainContainer() {
-    return { type: types.CREATE_MAIN_CONTAINER };
+function createMainContainer(dataContainer) {
+    return {
+        type: types.CREATE_MAIN_CONTAINER,
+        payload: dataContainer
+    };
 }
 
 function createArrows(dataArrows) {
@@ -516,6 +574,14 @@ function setSlides(slides) {
 
 function setBreadcrumbs(breadcrumbs) {
     return { type: types.SET_BREADCRUMBS, payload: breadcrumbs };
+}
+
+function displaySlide(targetSlide) {
+    return { type: types.DISPLAY_SLIDE, payload: targetSlide };
+}
+
+function setTimer(timerId) {
+    return { type: types.SET_TIMER, payload: timerId };
 }
 
 /***/ }),
@@ -579,7 +645,10 @@ exports.default = createBreadcrumbs;
 
 var _classNames = __webpack_require__(0);
 
-function createBreadcrumbs(amount, listener) {
+function createBreadcrumbs(_ref) {
+    var amount = _ref.amount,
+        listener = _ref.listener;
+
     var breadcrumbsContainer = document.createElement('div');
 
     for (var i = 0; i < amount; i++) {
@@ -635,10 +704,18 @@ exports.default = Container;
 
 var _classNames = __webpack_require__(0);
 
-function Container() {
+function Container(_ref) {
+    var listener = _ref.listener;
+
     var container = document.createElement('div');
 
     container.classList.add(_classNames.CLASS_SLIDER);
+    container.addEventListener('mouseenter', function () {
+        console.log('mouseenter');listener('stop');
+    });
+    container.addEventListener('mouseleave', function () {
+        console.log('mouseleave');listener();
+    });
 
     return container;
 }
@@ -729,7 +806,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function elementsBuilder(action) {
     switch (action.type) {
         case _actionTypes.CREATE_MAIN_CONTAINER:
-            return (0, _MainContainer2.default)();
+            return (0, _MainContainer2.default)(action.payload);
         case _actionTypes.CREATE_SLIDES:
             return (0, _Slides2.default)(action.payload);
         case _actionTypes.CREATE_ARROWS:
@@ -755,6 +832,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _updateState = __webpack_require__(15);
+
+var _updateState2 = _interopRequireDefault(_updateState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Store = function () {
@@ -767,7 +850,7 @@ var Store = function () {
     }
 
     _createClass(Store, [{
-        key: "update",
+        key: 'update',
         value: function update(action) {
             this._state = this._updateState(this._state, action);
             this._callbacks.forEach(function (callback) {
@@ -775,12 +858,12 @@ var Store = function () {
             });
         }
     }, {
-        key: "subscribe",
+        key: 'subscribe',
         value: function subscribe(callback) {
             this._callbacks.push(callback);
         }
     }, {
-        key: "state",
+        key: 'state',
         get: function get() {
             return this._state;
         }
@@ -789,7 +872,9 @@ var Store = function () {
     return Store;
 }();
 
-exports.default = Store;
+var store = new Store(_updateState2.default);
+
+exports.default = store;
 
 /***/ }),
 /* 15 */
@@ -811,7 +896,9 @@ var _actionTypes = __webpack_require__(1);
 var initialState = {
     slides: null,
     breadcrumbs: null,
+    timer: null,
     currentSlide: 0,
+    prevSlide: 0,
     options: {
         urls: [],
         breadcrumbs: true,
@@ -825,6 +912,7 @@ function updateState() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
     var action = arguments[1];
 
+    console.log('action.type', action.type, 'action.payload', action.payload);
     switch (action.type) {
         case _actionTypes.SET_OPTIONS:
             return _extends({}, state, {
@@ -837,6 +925,15 @@ function updateState() {
         case _actionTypes.SET_BREADCRUMBS:
             return _extends({}, state, {
                 breadcrumbs: action.payload
+            });
+        case _actionTypes.DISPLAY_SLIDE:
+            return _extends({}, state, {
+                prevSlide: state.currentSlide,
+                currentSlide: action.payload
+            });
+        case _actionTypes.SET_TIMER:
+            return _extends({}, state, {
+                timer: action.payload
             });
         default:
             return state;
@@ -852,7 +949,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    display: inline-block;\r\n    width: 100%;\r\n    opacity: 1;\r\n    transition: opacity 1s ease;\r\n}\r\n\r\n.alGSlider__slide--hidden {\r\n    display: none;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 1;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 0;\r\n    height: 0;\r\n    margin: auto 0;\r\n    padding: 0;\r\n    border-style: solid;\r\n    outline: none;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n    border-width: 15px 20px 15px 0;\r\n    border-color: transparent #22dd33 transparent transparent;\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n    border-width: 15px 0 15px 20px;\r\n    border-color: transparent transparent transparent #22dd33;\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 1;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}", ""]);
+exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    display: inline-block;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.alGSlider__slide--hidden {\r\n    display: none;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 1;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0,0,0,0.2);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 1;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}", ""]);
 
 // exports
 

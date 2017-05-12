@@ -1,7 +1,10 @@
 import * as types from '../constants/actionTypes';
 
-export function createMainContainer() {
-    return {type: types.CREATE_MAIN_CONTAINER}
+export function createMainContainer(dataContainer) {
+    return {
+        type: types.CREATE_MAIN_CONTAINER,
+        payload: dataContainer
+    }
 }
 
 export function createArrows(dataArrows) {
@@ -39,4 +42,12 @@ export function setSlides(slides) {
 
 export function setBreadcrumbs(breadcrumbs) {
     return {type: types.SET_BREADCRUMBS, payload: breadcrumbs}
+}
+
+export function displaySlide(targetSlide) {
+    return {type: types.DISPLAY_SLIDE, payload: targetSlide}
+}
+
+export function setTimer(timerId) {
+    return {type: types.SET_TIMER, payload: timerId}
 }

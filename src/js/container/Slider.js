@@ -1,9 +1,7 @@
-import Store from '../store/Store';
-import updateState from '../updateState';
+import store from '../store/Store';
 import elementsBuilder from '../elementsBuilder';
 import * as action from '../actions/actions';
-
-const store = new Store(updateState);
+import * as classes from '../constants/classNames';
 
 export default class Slider {
     constructor(rootContainerId) {
@@ -13,9 +11,11 @@ export default class Slider {
     create(userOptions = {}) {
         store.update(action.setOptions(userOptions));
         const
+            noop = [],
             {options} = store.state,
-            container = elementsBuilder(action.createMainContainer()),
-            slidesContent = Array.prototype.concat(options.urls, this.rootContainer.children),
+            urls = options.urls.length ? options.urls : noop,
+            elemsRootContainer = Array.prototype.slice.call(this.rootContainer.children),
+            slidesContent = Array.prototype.concat(urls, elemsRootContainer),
             arrowData = [
                 {
                     direction: 'left',
@@ -26,61 +26,94 @@ export default class Slider {
                     listener: this.nextSlide
                 }
             ],
-            slides = slidesContent.length ?
-                elementsBuilder(action.createSlides(slidesContent))
+            breadcrumbsData = {
+                amount: slidesContent.length,
+                listener: this.selectSlide
+            };
+
+        const
+            container = elementsBuilder(action.createMainContainer({listener: this.run})),
+            slides = slidesContent.length
+                ? elementsBuilder(action.createSlides(slidesContent))
                 : elementsBuilder(action.createDataNotFound()),
-            breadcrumbs = options.breadcrumbs ? elementsBuilder(action.createBreadcrumbs(slides.length)) : [],
-            arrows = options.controls ? elementsBuilder(action.createArrows(arrowData)) : [];
+            breadcrumbs = options.breadcrumbs ? elementsBuilder(action.createBreadcrumbs(breadcrumbsData)) : noop,
+            arrows = options.controls ? elementsBuilder(action.createArrows(arrowData)) : noop;
 
         store.update(action.setSlides(slides));
-        store.update(action.setBreadcrumbs());
+        store.update(action.setBreadcrumbs(breadcrumbs.children));
+        store.subscribe(() => {
+            console.log(`currentSlide ${store.state.currentSlide}, prevSlide ${store.state.prevSlide}`)
+        });
+        store.subscribe(this.displaySlide);
 
         container.append(...Array.prototype.concat(slides, breadcrumbs, arrows));
         this.rootContainer.appendChild(container);
+
+        this.run();
     };
 
     prevSlide = event => {
-        event.preventDefault();
-        console.log('click');
-        /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
-         this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-         this._currentSlide--;
+        event && event.preventDefault();
 
-         if (this._currentSlide < 0) {
-         this._currentSlide = this._slides.length - 1
-         }
+        const
+            {currentSlide, slides} = store.state,
+            targetSlide = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
 
-         this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-         this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+        store.update(action.displaySlide(targetSlide))
     };
 
     nextSlide = event => {
-        event.preventDefault();
-        console.log('click');
-        /*this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
-         this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-         this._currentSlide++;
+        event && event.preventDefault();
 
-         if (this._currentSlide > this._slides.length - 1) {
-         this._currentSlide = 0
-         }
+        const
+            {currentSlide, slides} = store.state,
+            targetSlide = currentSlide + 1 < slides.length ? currentSlide + 1 : 0;
 
-         this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-         this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);*/
+        store.update(action.displaySlide(targetSlide))
     };
 
-    /*    selectSlide = event => {
-     event.preventDefault();
-     const numTargetElem = event.target.dataset.key;
-     console.log('click', numTargetElem);
-     if (isNaN(numTargetElem)) return;
+    selectSlide = event => {
+        event && event.preventDefault();
 
-     this._breadcrumbs[this._currentSlide].classList.remove(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-     this._slides[this._currentSlide].classList.add(CLASS_HIDDEN);
+        const targetSlide = parseInt(event.target.dataset.key, 10);
 
-     this._currentSlide = numTargetElem;
+        if (isNaN(targetSlide)) return;
 
-     this._breadcrumbs[this._currentSlide].classList.add(CLASS_BREADCRUMBS_ITEM_ACTIVE);
-     this._slides[this._currentSlide].classList.remove(CLASS_HIDDEN);
-     }*/
+        store.update(action.displaySlide(targetSlide))
+    };
+
+    displaySlide = () => {
+        const {currentSlide, prevSlide, slides, breadcrumbs, options} = store.state;
+
+        slides[prevSlide].classList.add(classes.CLASS_SLIDE_HIDDEN);
+        slides[currentSlide].classList.remove(classes.CLASS_SLIDE_HIDDEN);
+
+        if (options.breadcrumbs) {
+            breadcrumbs[prevSlide].classList.remove(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+            breadcrumbs[currentSlide].classList.add(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+        }
+    };
+
+    run = stopEvent => {
+        const
+            {options: {delay}} = store.state,
+            self = this;
+
+        if (!delay) return;
+
+        if (stopEvent === 'stop') {
+            const {timer} = store.state;
+            clearTimeout(timer);
+            store.update(action.setTimer(null));
+            return;
+        }
+
+        let timerId = setTimeout(function run() {
+            timerId = setTimeout(run, delay);
+            self.nextSlide();
+            store.update(action.setTimer(timerId));
+        }, delay);
+
+        store.update(action.setTimer(timerId));
+    }
 }

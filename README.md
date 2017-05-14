@@ -3,8 +3,6 @@ alGSlider.js
 
 Простой слайдер на JS.
 
-[Демо](http://www.bchanx.com/slidr)
-
 ## Instructions
 Включите `alGSlider.js` где-нибудь внизу html страницы после содержимого в теле body.
 

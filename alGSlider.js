@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -90,9 +90,7 @@ var CLASS_SLIDER = exports.CLASS_SLIDER = 'alGSlider',
     CLASS_BOUNCE_IN_LEFT = exports.CLASS_BOUNCE_IN_LEFT = 'bounceInLeft',
     CLASS_BOUNCE_IN_RIGHT = exports.CLASS_BOUNCE_IN_RIGHT = 'bounceInRight',
     CLASS_FADE_OUT = exports.CLASS_FADE_OUT = 'fadeOut',
-    CLASS_FADE_OUT_VISIBLE = exports.CLASS_FADE_OUT_VISIBLE = 'fadeOut--visible',
     CLASS_ZOOM_IN_OUT = exports.CLASS_ZOOM_IN_OUT = 'zoomInOut',
-    CLASS_ZOOM_IN_OUT_VISIBLE = exports.CLASS_ZOOM_IN_OUT_VISIBLE = 'zoomInOut--visible',
     CLASS_ZOOM_OUT_LEFT = exports.CLASS_ZOOM_OUT_LEFT = 'zoomOutLeft',
     CLASS_ZOOM_OUT_RIGHT = exports.CLASS_ZOOM_OUT_RIGHT = 'zoomOutRight',
     CLASS_ZOOM_IN_LEFT = exports.CLASS_ZOOM_IN_LEFT = 'zoomInLeft',
@@ -132,72 +130,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Store = __webpack_require__(14);
+
+var _Store2 = _interopRequireDefault(_Store);
+
 var _updateState = __webpack_require__(15);
 
 var _updateState2 = _interopRequireDefault(_updateState);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Store = function () {
-    function Store(updateState, state) {
-        _classCallCheck(this, Store);
-
-        this._updateState = updateState;
-        this._state = state;
-        this._callbacks = [];
-    }
-
-    _createClass(Store, [{
-        key: 'update',
-        value: function update(action) {
-            this._state = this._updateState(this._state, action);
-            this._callbacks.forEach(function (callback) {
-                return callback();
-            });
-        }
-    }, {
-        key: 'subscribe',
-        value: function subscribe(callback) {
-            this._callbacks.push(callback);
-        }
-    }, {
-        key: 'state',
-        get: function get() {
-            return this._state;
-        }
-    }]);
-
-    return Store;
-}();
-
-var store = new Store(_updateState2.default);
-
-exports.default = store;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Store = __webpack_require__(2);
-
-var _Store2 = _interopRequireDefault(_Store);
-
-var _elementsBuilder = __webpack_require__(14);
+var _elementsBuilder = __webpack_require__(13);
 
 var _elementsBuilder2 = _interopRequireDefault(_elementsBuilder);
 
-var _actions = __webpack_require__(8);
+var _actions = __webpack_require__(7);
 
 var action = _interopRequireWildcard(_actions);
 
@@ -222,25 +167,25 @@ var Slider = function () {
         this.prevSlide = function (event) {
             event && event.preventDefault();
 
-            var _store$state = _Store2.default.state,
+            var _store$state = _this.store.state,
                 currentSlide = _store$state.currentSlide,
                 slides = _store$state.slides,
                 targetSlide = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
 
 
-            _Store2.default.update(action.displaySlide(targetSlide));
+            _this.store.update(action.displaySlide(targetSlide));
         };
 
         this.nextSlide = function (event) {
             event && event.preventDefault();
 
-            var _store$state2 = _Store2.default.state,
+            var _store$state2 = _this.store.state,
                 currentSlide = _store$state2.currentSlide,
                 slides = _store$state2.slides,
                 targetSlide = currentSlide + 1 < slides.length ? currentSlide + 1 : 0;
 
 
-            _Store2.default.update(action.displaySlide(targetSlide));
+            _this.store.update(action.displaySlide(targetSlide));
         };
 
         this.selectSlide = function (event) {
@@ -250,11 +195,11 @@ var Slider = function () {
 
             if (isNaN(targetSlide)) return;
 
-            _Store2.default.update(action.displaySlide(targetSlide));
+            _this.store.update(action.displaySlide(targetSlide));
         };
 
         this.displaySlide = function () {
-            var _store$state3 = _Store2.default.state,
+            var _store$state3 = _this.store.state,
                 currentSlide = _store$state3.currentSlide,
                 prevSlide = _store$state3.prevSlide,
                 slides = _store$state3.slides,
@@ -276,7 +221,7 @@ var Slider = function () {
             } else {
                 direction = 'right';
             }
-            console.log('direction:', direction);
+
             switch (options.transition) {
                 case 'bounceIn':
                     if (direction === 'right') {
@@ -319,41 +264,44 @@ var Slider = function () {
         };
 
         this.run = function (stopEvent) {
-            var delay = _Store2.default.state.options.delay,
+            var delay = _this.store.state.options.delay,
                 self = _this;
 
 
             if (!delay) return;
 
             if (stopEvent === 'stop') {
-                var timer = _Store2.default.state.timer;
+                var timer = _this.store.state.timer;
 
                 clearTimeout(timer);
-                _Store2.default.update(action.setTimer(null));
+                _this.store.update(action.setTimer(null));
                 return;
             }
 
             var timerId = setTimeout(function run() {
                 timerId = setTimeout(run, delay);
                 self.nextSlide();
-                _Store2.default.update(action.setTimer(timerId));
+                self.store.update(action.setTimer(timerId));
             }, delay);
 
-            _Store2.default.update(action.setTimer(timerId));
+            _this.store.update(action.setTimer(timerId));
         };
 
         this.rootContainer = document.getElementById(rootContainerId);
+        this.store = new _Store2.default(_updateState2.default);
     }
 
     _createClass(Slider, [{
         key: 'create',
         value: function create() {
+            var _this2 = this;
+
             var userOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-            _Store2.default.update(action.setOptions(userOptions));
+            this.store.update(action.setOptions(userOptions));
 
             var noop = [],
-                options = _Store2.default.state.options,
+                options = this.store.state.options,
                 urls = options.urls.length ? options.urls : noop,
                 elemsRootContainer = Array.prototype.slice.call(this.rootContainer.children),
                 slidesContent = Array.prototype.concat(urls, elemsRootContainer),
@@ -371,16 +319,16 @@ var Slider = function () {
 
 
             var container = (0, _elementsBuilder2.default)(action.createMainContainer({ listener: this.run })),
-                slides = slidesContent.length ? (0, _elementsBuilder2.default)(action.createSlides(slidesContent)) : (0, _elementsBuilder2.default)(action.createDataNotFound()),
+                slides = slidesContent.length ? (0, _elementsBuilder2.default)(action.createSlides({ dataArr: slidesContent, transition: options.transition })) : (0, _elementsBuilder2.default)(action.createDataNotFound()),
                 breadcrumbs = options.breadcrumbs ? (0, _elementsBuilder2.default)(action.createBreadcrumbs(breadcrumbsData)) : noop,
                 arrows = options.controls ? (0, _elementsBuilder2.default)(action.createArrows(arrowData)) : noop;
 
-            _Store2.default.update(action.setSlides(slides));
-            _Store2.default.update(action.setBreadcrumbs(breadcrumbs.children));
-            _Store2.default.subscribe(function () {
-                console.log('currentSlide ' + _Store2.default.state.currentSlide + ', prevSlide ' + _Store2.default.state.prevSlide);
+            this.store.update(action.setSlides(slides));
+            this.store.update(action.setBreadcrumbs(breadcrumbs.children));
+            this.store.subscribe(function () {
+                console.log('currentSlide ' + _this2.store.state.currentSlide + ', prevSlide ' + _this2.store.state.prevSlide);
             });
-            _Store2.default.subscribe(this.displaySlide);
+            this.store.subscribe(this.displaySlide);
 
             container.append.apply(container, _toConsumableArray(Array.prototype.concat(slides, breadcrumbs, arrows)));
             this.rootContainer.appendChild(container);
@@ -395,7 +343,7 @@ var Slider = function () {
 exports.default = Slider;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -426,7 +374,7 @@ if(false) {
 }
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -508,7 +456,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -603,17 +551,17 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Slider = __webpack_require__(3);
+var _Slider = __webpack_require__(2);
 
 var _Slider2 = _interopRequireDefault(_Slider);
 
-__webpack_require__(4);
+__webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -622,7 +570,7 @@ window.alGSlider = function (id, options) {
 };
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -701,7 +649,7 @@ function setTimer(timerId) {
 }
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -748,7 +696,7 @@ function Arrow(direction, listener) {
 }
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -788,7 +736,7 @@ function createBreadcrumbs(_ref) {
 }
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,7 +755,7 @@ function DataNotFound() {
 }
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -837,7 +785,7 @@ function Container(_ref) {
 }
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -850,22 +798,17 @@ exports.default = Slides;
 
 var _classNames = __webpack_require__(0);
 
-var _Store = __webpack_require__(2);
+function Slides(_ref) {
+    var dataArr = _ref.dataArr,
+        transition = _ref.transition;
 
-var _Store2 = _interopRequireDefault(_Store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function Slides(dataArr) {
     return Array.prototype.map.call(dataArr, function (item, key) {
-        return Slide(item, key);
+        return Slide(item, key, transition);
     });
 }
 
-function Slide(item, key) {
-    var divContainer = document.createElement('div'),
-        transition = _Store2.default.state.options.transition;
-
+function Slide(item, key, transition) {
+    var divContainer = document.createElement('div');
 
     var content = null,
         animationClass = '';
@@ -907,7 +850,7 @@ function Slide(item, key) {
 }
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -918,23 +861,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = elementsBuilder;
 
-var _MainContainer = __webpack_require__(12);
+var _MainContainer = __webpack_require__(11);
 
 var _MainContainer2 = _interopRequireDefault(_MainContainer);
 
-var _Slides = __webpack_require__(13);
+var _Slides = __webpack_require__(12);
 
 var _Slides2 = _interopRequireDefault(_Slides);
 
-var _Arrows = __webpack_require__(9);
+var _Arrows = __webpack_require__(8);
 
 var _Arrows2 = _interopRequireDefault(_Arrows);
 
-var _Breadcrumbs = __webpack_require__(10);
+var _Breadcrumbs = __webpack_require__(9);
 
 var _Breadcrumbs2 = _interopRequireDefault(_Breadcrumbs);
 
-var _DataNotFound = __webpack_require__(11);
+var _DataNotFound = __webpack_require__(10);
 
 var _DataNotFound2 = _interopRequireDefault(_DataNotFound);
 
@@ -958,6 +901,55 @@ function elementsBuilder(action) {
             return (0, _DataNotFound2.default)();
     }
 }
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Store = function () {
+    function Store(updateState, state) {
+        _classCallCheck(this, Store);
+
+        this._updateState = updateState;
+        this._state = state;
+        this._callbacks = [];
+    }
+
+    _createClass(Store, [{
+        key: "update",
+        value: function update(action) {
+            this._state = this._updateState(this._state, action);
+            this._callbacks.forEach(function (callback) {
+                return callback();
+            });
+        }
+    }, {
+        key: "subscribe",
+        value: function subscribe(callback) {
+            this._callbacks.push(callback);
+        }
+    }, {
+        key: "state",
+        get: function get() {
+            return this._state;
+        }
+    }]);
+
+    return Store;
+}();
+
+exports.default = Store;
 
 /***/ }),
 /* 15 */
@@ -1027,12 +1019,12 @@ function updateState() {
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(5)(undefined);
+exports = module.exports = __webpack_require__(4)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    min-height: 100px;\r\n    min-width: 100px;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    z-index: 0;\r\n    position: absolute;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    visibility: hidden;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 3;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0, 0, 0, 0.1);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left:hover,\r\n.alGSlider__arrow-right:hover {\r\n    background: rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 3;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}\r\n\r\n.fadeOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    transition: opacity 1s ease-out;\r\n}\r\n\r\n.bounceIn {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes bounceInRight {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    from {\r\n        opacity: 0;\r\n        transform: translate3d(3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(-25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(-5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInRight {\r\n    animation-name: bounceInRight;\r\n}\r\n\r\n@keyframes bounceInLeft {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    0% {\r\n        opacity: 0;\r\n        transform: translate3d(-3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(-10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInLeft {\r\n    animation-name: bounceInLeft;\r\n}\r\n\r\n.zoomInOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes zoomInLeft {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomInLeft {\r\n    animation-name: zoomInLeft;\r\n}\r\n\r\n@keyframes zoomInRight {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n\r\n}\r\n\r\n.zoomInRight {\r\n    animation-name: zoomInRight;\r\n}\r\n\r\n@keyframes zoomOutLeft {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomOutLeft {\r\n    animation-name: zoomOutLeft;\r\n}\r\n\r\n@keyframes zoomOutRight {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n}\r\n\r\n.zoomOutRight {\r\n    animation-name: zoomOutRight;\r\n}\r\n\r\n.alGSlider__slide--visible {\r\n    z-index: 1;\r\n    visibility: visible;\r\n    opacity: 1;\r\n}\r\n\r\n.bounceIn--visible {\r\n    z-index: 2;\r\n}\r\n\r\n.zoomInOut--visible {\r\n\r\n}", ""]);
+exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    min-height: 100px;\r\n    min-width: 100px;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    z-index: 0;\r\n    position: absolute;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    visibility: hidden;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 3;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0, 0, 0, 0.1);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left:hover,\r\n.alGSlider__arrow-right:hover {\r\n    background: rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 3;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}\r\n\r\n.fadeOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    transition: opacity 1s ease-out;\r\n}\r\n\r\n.bounceIn {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes bounceInRight {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    from {\r\n        opacity: 0;\r\n        transform: translate3d(3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(-25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(-5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInRight {\r\n    animation-name: bounceInRight;\r\n}\r\n\r\n@keyframes bounceInLeft {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    0% {\r\n        opacity: 0;\r\n        transform: translate3d(-3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(-10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInLeft {\r\n    animation-name: bounceInLeft;\r\n}\r\n\r\n.zoomInOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes zoomInLeft {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomInLeft {\r\n    animation-name: zoomInLeft;\r\n}\r\n\r\n@keyframes zoomInRight {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n\r\n}\r\n\r\n.zoomInRight {\r\n    animation-name: zoomInRight;\r\n}\r\n\r\n@keyframes zoomOutLeft {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomOutLeft {\r\n    animation-name: zoomOutLeft;\r\n}\r\n\r\n@keyframes zoomOutRight {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n}\r\n\r\n.zoomOutRight {\r\n    animation-name: zoomOutRight;\r\n}\r\n\r\n.alGSlider__slide--visible {\r\n    z-index: 1;\r\n    visibility: visible;\r\n    opacity: 1;\r\n}\r\n\r\n.bounceIn--visible {\r\n    z-index: 2;\r\n}", ""]);
 
 // exports
 
@@ -1075,7 +1067,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(6);
+	fixUrls = __webpack_require__(5);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {

@@ -10,6 +10,7 @@
     <script src="alGSlider.js"></script>
 </head>
 <body>
+<h2>Slider 1</h2>
     <div id="sliderURL">
         <div style="background-color: red">1</div>
         <span style="background-color: blue">2</span>
@@ -19,7 +20,19 @@
             <blockquote><i>Взгляд на то, как удаляли обычные и необычные узкие места в производительности при создании одного из крупнейших в мире прогрессивных веб-приложений (PWA) на React.js — <a href="https://mobile.twitter.com/">Twitter Lite</a></i></blockquote><br>
         </div>
     </div>
-
+<h2>Slider 2</h2>
+    <div id="sliderNodes" style="height: 400px; overflow: hidden">
+        <div style="background-color: red">1</div>
+        <span style="background-color: blue">2</span>
+        <div style="background-color: white"><h2>Twitter Lite и высокопроизводительные прогрессивные веб-приложения на React</h2><br>
+            <img src="https://habrastorage.org/getpro/habr/post_images/c64/b58/183/c64b5818384b4fec9fe4ce0056531aeb.png"><br>
+            <br>
+            <blockquote><i>Взгляд на то, как удаляли обычные и необычные узкие места в производительности при создании одного из крупнейших в мире прогрессивных веб-приложений (PWA) на React.js — <a href="https://mobile.twitter.com/">Twitter Lite</a></i></blockquote><br>
+        </div>
+        <p style="background-color: antiquewhite">2 sefs efsef sef sef</p>
+        <a href="#" style="background-color: #22dd33">Link</a>
+        <button style="background-color: aquamarine">Button</button>
+    </div>
     <script>
         const arrUrlImg = [
             'https://pp.userapi.com/c638120/v638120750/34fe9/E_0nqviq1sc.jpg',
@@ -31,11 +44,19 @@
 
         alGSlider('sliderURL', {
             urls:arrUrlImg,
-            breadcrumbs: true,
+            breadcrumbs: false,
             controls: true,
-            delay: 1500,
+            delay: 3000,
             transition: 'zoomInOut'
         });
+
+        alGSlider('sliderNodes', {
+            breadcrumbs: true,
+            controls: false,
+            delay: 1500,
+            transition: 'bounceIn'
+        });
+
     </script>
 </body>
 </html>

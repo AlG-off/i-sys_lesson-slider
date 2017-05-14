@@ -1,4 +1,5 @@
-import store from '../store/Store';
+import Store from '../store/Store';
+import updateState from '../updateState';
 import elementsBuilder from '../elementsBuilder';
 import * as action from '../actions/actions';
 import * as classes from '../constants/classNames';
@@ -6,13 +7,14 @@ import * as classes from '../constants/classNames';
 export default class Slider {
     constructor(rootContainerId) {
         this.rootContainer = document.getElementById(rootContainerId);
+        this.store = new Store(updateState);
     }
 
     create(userOptions = {}) {
-        store.update(action.setOptions(userOptions));
+        this.store.update(action.setOptions(userOptions));
         const
             noop = [],
-            {options} = store.state,
+            {options} = this.store.state,
             urls = options.urls.length ? options.urls : noop,
             elemsRootContainer = Array.prototype.slice.call(this.rootContainer.children),
             slidesContent = Array.prototype.concat(urls, elemsRootContainer),
@@ -34,17 +36,14 @@ export default class Slider {
         const
             container = elementsBuilder(action.createMainContainer({listener: this.run})),
             slides = slidesContent.length
-                ? elementsBuilder(action.createSlides(slidesContent))
+                ? elementsBuilder(action.createSlides({dataArr: slidesContent, transition: options.transition}))
                 : elementsBuilder(action.createDataNotFound()),
             breadcrumbs = options.breadcrumbs ? elementsBuilder(action.createBreadcrumbs(breadcrumbsData)) : noop,
             arrows = options.controls ? elementsBuilder(action.createArrows(arrowData)) : noop;
 
-        store.update(action.setSlides(slides));
-        store.update(action.setBreadcrumbs(breadcrumbs.children));
-        store.subscribe(() => {
-            console.log(`currentSlide ${store.state.currentSlide}, prevSlide ${store.state.prevSlide}`)
-        });
-        store.subscribe(this.displaySlide);
+        this.store.update(action.setSlides(slides));
+        this.store.update(action.setBreadcrumbs(breadcrumbs.children));
+        this.store.subscribe(this.displaySlide);
 
         container.append(...Array.prototype.concat(slides, breadcrumbs, arrows));
         this.rootContainer.appendChild(container);
@@ -56,20 +55,20 @@ export default class Slider {
         event && event.preventDefault();
 
         const
-            {currentSlide, slides} = store.state,
+            {currentSlide, slides} = this.store.state,
             targetSlide = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
 
-        store.update(action.displaySlide(targetSlide))
+        this.store.update(action.displaySlide(targetSlide))
     };
 
     nextSlide = event => {
         event && event.preventDefault();
 
         const
-            {currentSlide, slides} = store.state,
+            {currentSlide, slides} = this.store.state,
             targetSlide = currentSlide + 1 < slides.length ? currentSlide + 1 : 0;
 
-        store.update(action.displaySlide(targetSlide))
+        this.store.update(action.displaySlide(targetSlide))
     };
 
     selectSlide = event => {
@@ -79,11 +78,11 @@ export default class Slider {
 
         if (isNaN(targetSlide)) return;
 
-        store.update(action.displaySlide(targetSlide))
+        this.store.update(action.displaySlide(targetSlide))
     };
 
     displaySlide = () => {
-        const {currentSlide, prevSlide, slides, breadcrumbs, options} = store.state;
+        const {currentSlide, prevSlide, slides, breadcrumbs, options} = this.store.state;
 
         if (currentSlide === prevSlide) return;
 
@@ -99,7 +98,7 @@ export default class Slider {
         } else {
             direction = 'right';
         }
-        console.log('direction:', direction);
+
         switch (options.transition) {
             case 'bounceIn':
                 if (direction === 'right') {
@@ -153,24 +152,24 @@ export default class Slider {
 
     run = stopEvent => {
         const
-            {options: {delay}} = store.state,
+            {options: {delay}} = this.store.state,
             self = this;
 
         if (!delay) return;
 
         if (stopEvent === 'stop') {
-            const {timer} = store.state;
+            const {timer} = this.store.state;
             clearTimeout(timer);
-            store.update(action.setTimer(null));
+            this.store.update(action.setTimer(null));
             return;
         }
 
         let timerId = setTimeout(function run() {
             timerId = setTimeout(run, delay);
             self.nextSlide();
-            store.update(action.setTimer(timerId));
+            self.store.update(action.setTimer(timerId));
         }, delay);
 
-        store.update(action.setTimer(timerId));
+        this.store.update(action.setTimer(timerId));
     }
 }

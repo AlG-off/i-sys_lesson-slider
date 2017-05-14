@@ -14,7 +14,6 @@ import {
 
 
 export default function elementsBuilder(action) {
-    console.log(`action: ${action.type}, payload: ${action.payload}`);
     switch (action.type) {
         case CREATE_MAIN_CONTAINER:
             return MainContainer(action.payload);

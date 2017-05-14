@@ -22,7 +22,6 @@ const initialState = {
 };
 
 export default function updateState(state = initialState, action) {
-    console.log(`action: ${action.type}, payload: ${action.payload}`);
     switch (action.type) {
         case SET_OPTIONS:
             return {

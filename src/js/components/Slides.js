@@ -7,17 +7,13 @@ import {
     CLASS_ZOOM_IN_OUT
 } from '../constants/classNames';
 
-import store from '../store/Store';
-
-export default function Slides(dataArr) {
-    return Array.prototype.map.call(dataArr, (item, key) => Slide(item, key));
+export default function Slides({dataArr, transition}) {
+    return Array.prototype.map.call(dataArr, (item, key) => Slide(item, key, transition));
 }
 
 
-function Slide(item, key) {
-    const
-        divContainer = document.createElement('div'),
-        {options: {transition}} = store.state;
+function Slide(item, key, transition) {
+    const divContainer = document.createElement('div');
 
     let
         content = null,

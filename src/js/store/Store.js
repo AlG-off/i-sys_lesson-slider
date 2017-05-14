@@ -1,6 +1,5 @@
-import updateState from '../updateState';
 
-class Store {
+export default class Store {
     constructor(updateState, state) {
         this._updateState = updateState;
         this._state = state;
@@ -20,7 +19,3 @@ class Store {
         this._callbacks.push(callback);
     }
 }
-
-const store = new Store(updateState);
-
-export default store;

@@ -17,12 +17,12 @@ const initialState = {
         breadcrumbs: true,
         controls: true,
         delay: 0,
-        transition: 'liner'
+        transition: 'none'
     }
 };
 
 export default function updateState(state = initialState, action) {
-    console.log('action.type', action.type, 'action.payload', action.payload);
+    console.log(`action: ${action.type}, payload: ${action.payload}`);
     switch (action.type) {
         case SET_OPTIONS:
             return {

@@ -85,13 +85,70 @@ export default class Slider {
     displaySlide = () => {
         const {currentSlide, prevSlide, slides, breadcrumbs, options} = store.state;
 
-        slides[prevSlide].classList.add(classes.CLASS_SLIDE_HIDDEN);
-        slides[currentSlide].classList.remove(classes.CLASS_SLIDE_HIDDEN);
+        if (currentSlide === prevSlide) return;
+
+        let direction = 'right';
 
         if (options.breadcrumbs) {
             breadcrumbs[prevSlide].classList.remove(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
             breadcrumbs[currentSlide].classList.add(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
         }
+
+        if (prevSlide > currentSlide && prevSlide - currentSlide !== slides.length - 1 || !prevSlide && currentSlide === slides.length - 1) {
+            direction = 'left';
+        } else {
+            direction = 'right';
+        }
+        console.log('direction:', direction);
+        switch (options.transition) {
+            case 'bounceIn':
+                if (direction === 'right') {
+                    slides[currentSlide].classList.add(classes.CLASS_BOUNCE_IN_RIGHT);
+                } else {
+                    slides[currentSlide].classList.add(classes.CLASS_BOUNCE_IN_LEFT);
+                }
+
+                slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE, classes.CLASS_BOUNCE_IN_VISIBLE);
+                slides[prevSlide].classList.remove(
+                    classes.CLASS_BOUNCE_IN_RIGHT,
+                    classes.CLASS_BOUNCE_IN_LEFT,
+                    classes.CLASS_BOUNCE_IN_VISIBLE
+                );
+
+                setTimeout(()=> {slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE)}, 500);
+                break;
+            case 'fadeOut':
+                slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
+                slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
+                break;
+            case 'zoomInOut':
+                slides[prevSlide].classList.remove(
+                    classes.CLASS_ZOOM_IN_RIGHT,
+                    classes.CLASS_ZOOM_IN_LEFT
+                );
+                slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
+                if (direction === 'right') {
+                    slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_LEFT);
+                    slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_RIGHT);
+                } else {
+                    slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_RIGHT);
+                    slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_LEFT);
+                }
+
+                setTimeout(()=> {
+                    slides[prevSlide].classList.remove(
+                        classes.CLASS_SLIDE_VISIBLE,
+                        classes.CLASS_ZOOM_OUT_RIGHT,
+                        classes.CLASS_ZOOM_OUT_LEFT,
+                    );
+                }, 500);
+                break;
+            case 'none':
+            default:
+                slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
+                slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
+        }
+
     };
 
     run = stopEvent => {

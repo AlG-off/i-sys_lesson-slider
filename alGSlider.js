@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,12 +79,24 @@ Object.defineProperty(exports, "__esModule", {
 var CLASS_SLIDER = exports.CLASS_SLIDER = 'alGSlider',
     CLASS_SLIDE = exports.CLASS_SLIDE = 'alGSlider__slide',
     CLASS_SLIDE_ITEM = exports.CLASS_SLIDE_ITEM = 'alGSlider__slide-item',
+    CLASS_SLIDE_VISIBLE = exports.CLASS_SLIDE_VISIBLE = 'alGSlider__slide--visible',
     CLASS_ARROW_LEFT = exports.CLASS_ARROW_LEFT = 'alGSlider__arrow-left',
     CLASS_ARROW_RIGHT = exports.CLASS_ARROW_RIGHT = 'alGSlider__arrow-right',
-    CLASS_SLIDE_HIDDEN = exports.CLASS_SLIDE_HIDDEN = 'alGSlider__slide--hidden',
     CLASS_BREADCRUMBS = exports.CLASS_BREADCRUMBS = 'alGSlider__breadcrumbs',
     CLASS_BREADCRUMBS_ITEM = exports.CLASS_BREADCRUMBS_ITEM = 'alGSlider__breadcrumbs-item',
-    CLASS_BREADCRUMBS_ITEM_ACTIVE = exports.CLASS_BREADCRUMBS_ITEM_ACTIVE = 'alGSlider__breadcrumbs-item--active';
+    CLASS_BREADCRUMBS_ITEM_ACTIVE = exports.CLASS_BREADCRUMBS_ITEM_ACTIVE = 'alGSlider__breadcrumbs-item--active',
+    CLASS_BOUNCE_IN = exports.CLASS_BOUNCE_IN = 'bounceIn',
+    CLASS_BOUNCE_IN_VISIBLE = exports.CLASS_BOUNCE_IN_VISIBLE = 'bounceIn--visible',
+    CLASS_BOUNCE_IN_LEFT = exports.CLASS_BOUNCE_IN_LEFT = 'bounceInLeft',
+    CLASS_BOUNCE_IN_RIGHT = exports.CLASS_BOUNCE_IN_RIGHT = 'bounceInRight',
+    CLASS_FADE_OUT = exports.CLASS_FADE_OUT = 'fadeOut',
+    CLASS_FADE_OUT_VISIBLE = exports.CLASS_FADE_OUT_VISIBLE = 'fadeOut--visible',
+    CLASS_ZOOM_IN_OUT = exports.CLASS_ZOOM_IN_OUT = 'zoomInOut',
+    CLASS_ZOOM_IN_OUT_VISIBLE = exports.CLASS_ZOOM_IN_OUT_VISIBLE = 'zoomInOut--visible',
+    CLASS_ZOOM_OUT_LEFT = exports.CLASS_ZOOM_OUT_LEFT = 'zoomOutLeft',
+    CLASS_ZOOM_OUT_RIGHT = exports.CLASS_ZOOM_OUT_RIGHT = 'zoomOutRight',
+    CLASS_ZOOM_IN_LEFT = exports.CLASS_ZOOM_IN_LEFT = 'zoomInLeft',
+    CLASS_ZOOM_IN_RIGHT = exports.CLASS_ZOOM_IN_RIGHT = 'zoomInRight';
 
 /***/ }),
 /* 1 */
@@ -120,15 +132,72 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Store = __webpack_require__(14);
+var _updateState = __webpack_require__(15);
+
+var _updateState2 = _interopRequireDefault(_updateState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Store = function () {
+    function Store(updateState, state) {
+        _classCallCheck(this, Store);
+
+        this._updateState = updateState;
+        this._state = state;
+        this._callbacks = [];
+    }
+
+    _createClass(Store, [{
+        key: 'update',
+        value: function update(action) {
+            this._state = this._updateState(this._state, action);
+            this._callbacks.forEach(function (callback) {
+                return callback();
+            });
+        }
+    }, {
+        key: 'subscribe',
+        value: function subscribe(callback) {
+            this._callbacks.push(callback);
+        }
+    }, {
+        key: 'state',
+        get: function get() {
+            return this._state;
+        }
+    }]);
+
+    return Store;
+}();
+
+var store = new Store(_updateState2.default);
+
+exports.default = store;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Store = __webpack_require__(2);
 
 var _Store2 = _interopRequireDefault(_Store);
 
-var _elementsBuilder = __webpack_require__(13);
+var _elementsBuilder = __webpack_require__(14);
 
 var _elementsBuilder2 = _interopRequireDefault(_elementsBuilder);
 
-var _actions = __webpack_require__(7);
+var _actions = __webpack_require__(8);
 
 var action = _interopRequireWildcard(_actions);
 
@@ -193,12 +262,59 @@ var Slider = function () {
                 options = _store$state3.options;
 
 
-            slides[prevSlide].classList.add(classes.CLASS_SLIDE_HIDDEN);
-            slides[currentSlide].classList.remove(classes.CLASS_SLIDE_HIDDEN);
+            if (currentSlide === prevSlide) return;
+
+            var direction = 'right';
 
             if (options.breadcrumbs) {
                 breadcrumbs[prevSlide].classList.remove(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
                 breadcrumbs[currentSlide].classList.add(classes.CLASS_BREADCRUMBS_ITEM_ACTIVE);
+            }
+
+            if (prevSlide > currentSlide && prevSlide - currentSlide !== slides.length - 1 || !prevSlide && currentSlide === slides.length - 1) {
+                direction = 'left';
+            } else {
+                direction = 'right';
+            }
+            console.log('direction:', direction);
+            switch (options.transition) {
+                case 'bounceIn':
+                    if (direction === 'right') {
+                        slides[currentSlide].classList.add(classes.CLASS_BOUNCE_IN_RIGHT);
+                    } else {
+                        slides[currentSlide].classList.add(classes.CLASS_BOUNCE_IN_LEFT);
+                    }
+
+                    slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE, classes.CLASS_BOUNCE_IN_VISIBLE);
+                    slides[prevSlide].classList.remove(classes.CLASS_BOUNCE_IN_RIGHT, classes.CLASS_BOUNCE_IN_LEFT, classes.CLASS_BOUNCE_IN_VISIBLE);
+
+                    setTimeout(function () {
+                        slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
+                    }, 500);
+                    break;
+                case 'fadeOut':
+                    slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
+                    slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
+                    break;
+                case 'zoomInOut':
+                    slides[prevSlide].classList.remove(classes.CLASS_ZOOM_IN_RIGHT, classes.CLASS_ZOOM_IN_LEFT);
+                    slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
+                    if (direction === 'right') {
+                        slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_LEFT);
+                        slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_RIGHT);
+                    } else {
+                        slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_RIGHT);
+                        slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_LEFT);
+                    }
+
+                    setTimeout(function () {
+                        slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE, classes.CLASS_ZOOM_OUT_RIGHT, classes.CLASS_ZOOM_OUT_LEFT);
+                    }, 500);
+                    break;
+                case 'none':
+                default:
+                    slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
+                    slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE);
             }
         };
 
@@ -279,7 +395,7 @@ var Slider = function () {
 exports.default = Slider;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -310,7 +426,7 @@ if(false) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -392,7 +508,7 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -487,17 +603,17 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Slider = __webpack_require__(2);
+var _Slider = __webpack_require__(3);
 
 var _Slider2 = _interopRequireDefault(_Slider);
 
-__webpack_require__(3);
+__webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -506,7 +622,7 @@ window.alGSlider = function (id, options) {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -585,7 +701,7 @@ function setTimer(timerId) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -632,7 +748,7 @@ function Arrow(direction, listener) {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -672,7 +788,7 @@ function createBreadcrumbs(_ref) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -691,7 +807,7 @@ function DataNotFound() {
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -711,17 +827,17 @@ function Container(_ref) {
 
     container.classList.add(_classNames.CLASS_SLIDER);
     container.addEventListener('mouseenter', function () {
-        console.log('mouseenter');listener('stop');
+        listener('stop');
     });
     container.addEventListener('mouseleave', function () {
-        console.log('mouseleave');listener();
+        listener();
     });
 
     return container;
 }
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -734,6 +850,12 @@ exports.default = Slides;
 
 var _classNames = __webpack_require__(0);
 
+var _Store = __webpack_require__(2);
+
+var _Store2 = _interopRequireDefault(_Store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function Slides(dataArr) {
     return Array.prototype.map.call(dataArr, function (item, key) {
         return Slide(item, key);
@@ -741,14 +863,31 @@ function Slides(dataArr) {
 }
 
 function Slide(item, key) {
-    var divContainer = document.createElement('div');
+    var divContainer = document.createElement('div'),
+        transition = _Store2.default.state.options.transition;
 
-    var content = null;
+
+    var content = null,
+        animationClass = '';
+
+    switch (transition) {
+        case 'bounceIn':
+            animationClass = _classNames.CLASS_BOUNCE_IN;
+            break;
+        case 'fadeOut':
+            animationClass = _classNames.CLASS_FADE_OUT;
+            break;
+        case 'zoomInOut':
+            animationClass = _classNames.CLASS_ZOOM_IN_OUT;
+            break;
+        default:
+            animationClass = _classNames.CLASS_SLIDE;
+    }
 
     if (key === 0) {
-        divContainer.classList.add(_classNames.CLASS_SLIDE);
+        divContainer.classList.add(_classNames.CLASS_SLIDE, _classNames.CLASS_SLIDE_VISIBLE, animationClass);
     } else {
-        divContainer.classList.add(_classNames.CLASS_SLIDE, _classNames.CLASS_SLIDE_HIDDEN);
+        divContainer.classList.add(_classNames.CLASS_SLIDE, animationClass);
     }
 
     divContainer.setAttribute('data-key', key);
@@ -768,7 +907,7 @@ function Slide(item, key) {
 }
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -779,23 +918,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = elementsBuilder;
 
-var _MainContainer = __webpack_require__(11);
+var _MainContainer = __webpack_require__(12);
 
 var _MainContainer2 = _interopRequireDefault(_MainContainer);
 
-var _Slides = __webpack_require__(12);
+var _Slides = __webpack_require__(13);
 
 var _Slides2 = _interopRequireDefault(_Slides);
 
-var _Arrows = __webpack_require__(8);
+var _Arrows = __webpack_require__(9);
 
 var _Arrows2 = _interopRequireDefault(_Arrows);
 
-var _Breadcrumbs = __webpack_require__(9);
+var _Breadcrumbs = __webpack_require__(10);
 
 var _Breadcrumbs2 = _interopRequireDefault(_Breadcrumbs);
 
-var _DataNotFound = __webpack_require__(10);
+var _DataNotFound = __webpack_require__(11);
 
 var _DataNotFound2 = _interopRequireDefault(_DataNotFound);
 
@@ -804,6 +943,7 @@ var _actionTypes = __webpack_require__(1);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function elementsBuilder(action) {
+    console.log('action: ' + action.type + ', payload: ' + action.payload);
     switch (action.type) {
         case _actionTypes.CREATE_MAIN_CONTAINER:
             return (0, _MainContainer2.default)(action.payload);
@@ -818,63 +958,6 @@ function elementsBuilder(action) {
             return (0, _DataNotFound2.default)();
     }
 }
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _updateState = __webpack_require__(15);
-
-var _updateState2 = _interopRequireDefault(_updateState);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Store = function () {
-    function Store(updateState, state) {
-        _classCallCheck(this, Store);
-
-        this._updateState = updateState;
-        this._state = state;
-        this._callbacks = [];
-    }
-
-    _createClass(Store, [{
-        key: 'update',
-        value: function update(action) {
-            this._state = this._updateState(this._state, action);
-            this._callbacks.forEach(function (callback) {
-                return callback();
-            });
-        }
-    }, {
-        key: 'subscribe',
-        value: function subscribe(callback) {
-            this._callbacks.push(callback);
-        }
-    }, {
-        key: 'state',
-        get: function get() {
-            return this._state;
-        }
-    }]);
-
-    return Store;
-}();
-
-var store = new Store(_updateState2.default);
-
-exports.default = store;
 
 /***/ }),
 /* 15 */
@@ -904,7 +987,7 @@ var initialState = {
         breadcrumbs: true,
         controls: true,
         delay: 0,
-        transition: 'liner'
+        transition: 'none'
     }
 };
 
@@ -912,7 +995,7 @@ function updateState() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
     var action = arguments[1];
 
-    console.log('action.type', action.type, 'action.payload', action.payload);
+    console.log('action: ' + action.type + ', payload: ' + action.payload);
     switch (action.type) {
         case _actionTypes.SET_OPTIONS:
             return _extends({}, state, {
@@ -944,12 +1027,12 @@ function updateState() {
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(4)(undefined);
+exports = module.exports = __webpack_require__(5)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    display: inline-block;\r\n    width: 100%;\r\n    height: 100%;\r\n}\r\n\r\n.alGSlider__slide--hidden {\r\n    display: none;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 1;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0,0,0,0.2);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 1;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}", ""]);
+exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    min-height: 100px;\r\n    min-width: 100px;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    z-index: 0;\r\n    position: absolute;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    visibility: hidden;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 3;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0, 0, 0, 0.1);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left:hover,\r\n.alGSlider__arrow-right:hover {\r\n    background: rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 3;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}\r\n\r\n.fadeOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    transition: opacity 1s ease-out;\r\n}\r\n\r\n.bounceIn {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes bounceInRight {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    from {\r\n        opacity: 0;\r\n        transform: translate3d(3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(-25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(-5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInRight {\r\n    animation-name: bounceInRight;\r\n}\r\n\r\n@keyframes bounceInLeft {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    0% {\r\n        opacity: 0;\r\n        transform: translate3d(-3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(-10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInLeft {\r\n    animation-name: bounceInLeft;\r\n}\r\n\r\n.zoomInOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes zoomInLeft {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomInLeft {\r\n    animation-name: zoomInLeft;\r\n}\r\n\r\n@keyframes zoomInRight {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n\r\n}\r\n\r\n.zoomInRight {\r\n    animation-name: zoomInRight;\r\n}\r\n\r\n@keyframes zoomOutLeft {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomOutLeft {\r\n    animation-name: zoomOutLeft;\r\n}\r\n\r\n@keyframes zoomOutRight {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n}\r\n\r\n.zoomOutRight {\r\n    animation-name: zoomOutRight;\r\n}\r\n\r\n.alGSlider__slide--visible {\r\n    z-index: 1;\r\n    visibility: visible;\r\n    opacity: 1;\r\n}\r\n\r\n.bounceIn--visible {\r\n    z-index: 2;\r\n}\r\n\r\n.zoomInOut--visible {\r\n\r\n}", ""]);
 
 // exports
 
@@ -992,7 +1075,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(5);
+	fixUrls = __webpack_require__(6);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {

@@ -232,7 +232,7 @@ var Slider = function () {
 
                     slides[currentSlide].classList.add(classes.CLASS_SLIDE_VISIBLE, classes.CLASS_BOUNCE_IN_VISIBLE);
                     slides[prevSlide].classList.remove(classes.CLASS_BOUNCE_IN_RIGHT, classes.CLASS_BOUNCE_IN_LEFT, classes.CLASS_BOUNCE_IN_VISIBLE);
-
+                    //TODO: избавиться от setTimeout. Перейти на обработку TransitionEvent
                     setTimeout(function () {
                         slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE);
                     }, 500);
@@ -251,7 +251,7 @@ var Slider = function () {
                         slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_RIGHT);
                         slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_LEFT);
                     }
-
+                    //TODO: избавиться от setTimeout. Перейти на обработку TransitionEvent
                     setTimeout(function () {
                         slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE, classes.CLASS_ZOOM_OUT_RIGHT, classes.CLASS_ZOOM_OUT_LEFT);
                     }, 500);
@@ -294,8 +294,6 @@ var Slider = function () {
     _createClass(Slider, [{
         key: 'create',
         value: function create() {
-            var _this2 = this;
-
             var userOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             this.store.update(action.setOptions(userOptions));
@@ -325,9 +323,6 @@ var Slider = function () {
 
             this.store.update(action.setSlides(slides));
             this.store.update(action.setBreadcrumbs(breadcrumbs.children));
-            this.store.subscribe(function () {
-                console.log('currentSlide ' + _this2.store.state.currentSlide + ', prevSlide ' + _this2.store.state.prevSlide);
-            });
             this.store.subscribe(this.displaySlide);
 
             container.append.apply(container, _toConsumableArray(Array.prototype.concat(slides, breadcrumbs, arrows)));
@@ -658,34 +653,21 @@ function setTimer(timerId) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = Arrows;
+exports.default = arrows;
 
 var _classNames = __webpack_require__(0);
 
-/*
- [
-     {
-         direction: 'left',
-         listener: function()
-     },
-     {
-         direction: 'right',
-         listener: function()
-     }
- ]
- */
-
-function Arrows(dataArr) {
+function arrows(dataArr) {
     return dataArr.map(function (item) {
         var direction = item.direction,
             listener = item.listener;
 
 
-        return Arrow(direction, listener);
+        return arrow(direction, listener);
     });
 }
 
-function Arrow(direction, listener) {
+function arrow(direction, listener) {
     var arrow = document.createElement('button'),
         classes = direction === 'left' ? _classNames.CLASS_ARROW_LEFT : _classNames.CLASS_ARROW_RIGHT;
 
@@ -705,11 +687,11 @@ function Arrow(direction, listener) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = createBreadcrumbs;
+exports.default = breadcrumbs;
 
 var _classNames = __webpack_require__(0);
 
-function createBreadcrumbs(_ref) {
+function breadcrumbs(_ref) {
     var amount = _ref.amount,
         listener = _ref.listener;
 
@@ -745,8 +727,8 @@ function createBreadcrumbs(_ref) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = DataNotFound;
-function DataNotFound() {
+exports.default = dataNotFound;
+function dataNotFound() {
     var divElem = document.createElement('div');
 
     divElem.textContent = 'Нет данных для отображения';
@@ -764,11 +746,11 @@ function DataNotFound() {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = Container;
+exports.default = container;
 
 var _classNames = __webpack_require__(0);
 
-function Container(_ref) {
+function container(_ref) {
     var listener = _ref.listener;
 
     var container = document.createElement('div');
@@ -861,44 +843,43 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = elementsBuilder;
 
-var _MainContainer = __webpack_require__(11);
+var _mainContainer = __webpack_require__(11);
 
-var _MainContainer2 = _interopRequireDefault(_MainContainer);
+var _mainContainer2 = _interopRequireDefault(_mainContainer);
 
-var _Slides = __webpack_require__(12);
+var _slides = __webpack_require__(12);
 
-var _Slides2 = _interopRequireDefault(_Slides);
+var _slides2 = _interopRequireDefault(_slides);
 
-var _Arrows = __webpack_require__(8);
+var _arrows = __webpack_require__(8);
 
-var _Arrows2 = _interopRequireDefault(_Arrows);
+var _arrows2 = _interopRequireDefault(_arrows);
 
-var _Breadcrumbs = __webpack_require__(9);
+var _breadcrumbs = __webpack_require__(9);
 
-var _Breadcrumbs2 = _interopRequireDefault(_Breadcrumbs);
+var _breadcrumbs2 = _interopRequireDefault(_breadcrumbs);
 
-var _DataNotFound = __webpack_require__(10);
+var _dataNotFound = __webpack_require__(10);
 
-var _DataNotFound2 = _interopRequireDefault(_DataNotFound);
+var _dataNotFound2 = _interopRequireDefault(_dataNotFound);
 
 var _actionTypes = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function elementsBuilder(action) {
-    console.log('action: ' + action.type + ', payload: ' + action.payload);
     switch (action.type) {
         case _actionTypes.CREATE_MAIN_CONTAINER:
-            return (0, _MainContainer2.default)(action.payload);
+            return (0, _mainContainer2.default)(action.payload);
         case _actionTypes.CREATE_SLIDES:
-            return (0, _Slides2.default)(action.payload);
+            return (0, _slides2.default)(action.payload);
         case _actionTypes.CREATE_ARROWS:
-            return (0, _Arrows2.default)(action.payload);
+            return (0, _arrows2.default)(action.payload);
         case _actionTypes.CREATE_BREADCRUMBS:
-            return (0, _Breadcrumbs2.default)(action.payload);
+            return (0, _breadcrumbs2.default)(action.payload);
         case _actionTypes.CREATE_DATA_NOT_FOUND:
         default:
-            return (0, _DataNotFound2.default)();
+            return (0, _dataNotFound2.default)();
     }
 }
 
@@ -987,7 +968,6 @@ function updateState() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
     var action = arguments[1];
 
-    console.log('action: ' + action.type + ', payload: ' + action.payload);
     switch (action.type) {
         case _actionTypes.SET_OPTIONS:
             return _extends({}, state, {
@@ -1024,7 +1004,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    min-height: 100px;\r\n    min-width: 100px;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    z-index: 0;\r\n    position: absolute;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    visibility: hidden;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 3;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0, 0, 0, 0.1);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left:hover,\r\n.alGSlider__arrow-right:hover {\r\n    background: rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 3;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}\r\n\r\n.fadeOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    transition: opacity 1s ease-out;\r\n}\r\n\r\n.bounceIn {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes bounceInRight {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    from {\r\n        opacity: 0;\r\n        transform: translate3d(3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(-25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(-5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInRight {\r\n    animation-name: bounceInRight;\r\n}\r\n\r\n@keyframes bounceInLeft {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    0% {\r\n        opacity: 0;\r\n        transform: translate3d(-3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(-10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInLeft {\r\n    animation-name: bounceInLeft;\r\n}\r\n\r\n.zoomInOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes zoomInLeft {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomInLeft {\r\n    animation-name: zoomInLeft;\r\n}\r\n\r\n@keyframes zoomInRight {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n\r\n}\r\n\r\n.zoomInRight {\r\n    animation-name: zoomInRight;\r\n}\r\n\r\n@keyframes zoomOutLeft {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomOutLeft {\r\n    animation-name: zoomOutLeft;\r\n}\r\n\r\n@keyframes zoomOutRight {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n}\r\n\r\n.zoomOutRight {\r\n    animation-name: zoomOutRight;\r\n}\r\n\r\n.alGSlider__slide--visible {\r\n    z-index: 1;\r\n    visibility: visible;\r\n    opacity: 1;\r\n}\r\n\r\n.bounceIn--visible {\r\n    z-index: 2;\r\n}", ""]);
+exports.push([module.i, ".alGSlider {\r\n    position: relative;\r\n    display: block;\r\n    width: 100%;\r\n    height: 100%;\r\n    overflow: hidden;\r\n    min-height: 100px;\r\n    min-width: 100px;\r\n    max-width: 1280px;\r\n}\r\n\r\n.alGSlider__slide {\r\n    z-index: 0;\r\n    position: absolute;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    visibility: hidden;\r\n    text-decoration: none;\r\n    list-style: none;\r\n}\r\n\r\n.alGSlider__slide-item {\r\n    display: block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.alGSlider__arrow-left,\r\n.alGSlider__arrow-right {\r\n    z-index: 3;\r\n    position: absolute;\r\n    top: 0;\r\n    bottom: 0;\r\n    display: block;\r\n    width: 40px;\r\n    height: 100%;\r\n    padding: 0;\r\n    border: none;\r\n    outline: none;\r\n    cursor: pointer;\r\n    background: rgba(0, 0, 0, 0.1);\r\n    color: #fff;\r\n    font-size: 25px;\r\n}\r\n\r\n.alGSlider__arrow-left:hover,\r\n.alGSlider__arrow-right:hover {\r\n    background: rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.alGSlider__arrow-left {\r\n    left: 0;\r\n}\r\n\r\n.alGSlider__arrow-left::after {\r\n    content: '<';\r\n}\r\n\r\n.alGSlider__arrow-right {\r\n    right: 0;\r\n}\r\n\r\n.alGSlider__arrow-right::after {\r\n    content: '>';\r\n}\r\n\r\n.alGSlider__breadcrumbs {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    margin: auto;\r\n    padding-bottom: 10px;\r\n    z-index: 3;\r\n    text-align: center;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item {\r\n    display: inline-block;\r\n    width: 5px;\r\n    height: 5px;\r\n    margin-left: 3px;\r\n    margin-right: 3px;\r\n    border: 3px solid #ffffff;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n}\r\n\r\n.alGSlider__breadcrumbs-item--active {\r\n    background: #22dd33;\r\n}\r\n\r\n.fadeOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    transition: opacity 1s ease-out;\r\n}\r\n\r\n.bounceIn {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes bounceInRight {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    from {\r\n        opacity: 0;\r\n        transform: translate3d(3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(-25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(-5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInRight {\r\n    animation-name: bounceInRight;\r\n}\r\n\r\n@keyframes bounceInLeft {\r\n    from, 60%, 75%, 90%, to {\r\n        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);\r\n    }\r\n\r\n    0% {\r\n        opacity: 0;\r\n        transform: translate3d(-3000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: translate3d(25px, 0, 0);\r\n    }\r\n\r\n    75% {\r\n        transform: translate3d(-10px, 0, 0);\r\n    }\r\n\r\n    90% {\r\n        transform: translate3d(5px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        transform: none;\r\n    }\r\n}\r\n\r\n.bounceInLeft {\r\n    animation-name: bounceInLeft;\r\n}\r\n\r\n.zoomInOut {\r\n    visibility: visible;\r\n    opacity: 0;\r\n    animation-duration: 1s;\r\n    animation-fill-mode: both;\r\n}\r\n\r\n@keyframes zoomInLeft {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomInLeft {\r\n    animation-name: zoomInLeft;\r\n}\r\n\r\n@keyframes zoomInRight {\r\n    from {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n    }\r\n\r\n    60% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n\r\n}\r\n\r\n.zoomInRight {\r\n    animation-name: zoomInRight;\r\n}\r\n\r\n@keyframes zoomOutLeft {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(-2000px, 0, 0);\r\n        transform-origin: left center;\r\n    }\r\n}\r\n\r\n.zoomOutLeft {\r\n    animation-name: zoomOutLeft;\r\n}\r\n\r\n@keyframes zoomOutRight {\r\n    40% {\r\n        opacity: 1;\r\n        transform: scale3d(.475, .475, .475) translate3d(-42px, 0, 0);\r\n    }\r\n\r\n    to {\r\n        opacity: 0;\r\n        transform: scale(.1) translate3d(2000px, 0, 0);\r\n        transform-origin: right center;\r\n    }\r\n}\r\n\r\n.zoomOutRight {\r\n    animation-name: zoomOutRight;\r\n}\r\n\r\n.alGSlider__slide--visible {\r\n    z-index: 1;\r\n    visibility: visible;\r\n    opacity: 1;\r\n}\r\n\r\n.bounceIn--visible {\r\n    z-index: 2;\r\n}", ""]);
 
 // exports
 

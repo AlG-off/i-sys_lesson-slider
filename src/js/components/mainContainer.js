@@ -2,7 +2,7 @@ import {
     CLASS_SLIDER,
 } from '../constants/classNames';
 
-export default function Container({listener}) {
+export default function container({listener}) {
     const container = document.createElement('div');
 
     container.classList.add(CLASS_SLIDER);

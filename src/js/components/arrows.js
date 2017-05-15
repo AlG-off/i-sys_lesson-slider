@@ -3,28 +3,15 @@ import {
     CLASS_ARROW_LEFT
 } from '../constants/classNames';
 
-/*
- [
-     {
-         direction: 'left',
-         listener: function()
-     },
-     {
-         direction: 'right',
-         listener: function()
-     }
- ]
- */
-
-export default function Arrows(dataArr) {
+export default function arrows(dataArr) {
     return dataArr.map(item => {
         const {direction, listener} = item;
 
-        return Arrow(direction, listener);
+        return arrow(direction, listener);
     })
 }
 
-function Arrow(direction, listener) {
+function arrow(direction, listener) {
     const
         arrow = document.createElement('button'),
         classes = direction === 'left' ? CLASS_ARROW_LEFT : CLASS_ARROW_RIGHT;

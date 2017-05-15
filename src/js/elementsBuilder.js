@@ -1,8 +1,8 @@
-import MainContainer from './components/MainContainer';
-import Slides from './components/Slides';
-import Arrows from './components/Arrows';
-import Breadcrumbs from './components/Breadcrumbs';
-import DataNotFound from './components/DataNotFound';
+import mainContainer from './components/mainContainer';
+import slides from './components/slides';
+import arrows from './components/arrows';
+import breadcrumbs from './components/breadcrumbs';
+import dataNotFound from './components/dataNotFound';
 
 import {
     CREATE_MAIN_CONTAINER,
@@ -16,15 +16,15 @@ import {
 export default function elementsBuilder(action) {
     switch (action.type) {
         case CREATE_MAIN_CONTAINER:
-            return MainContainer(action.payload);
+            return mainContainer(action.payload);
         case CREATE_SLIDES:
-            return Slides(action.payload);
+            return slides(action.payload);
         case CREATE_ARROWS:
-            return Arrows(action.payload);
+            return arrows(action.payload);
         case CREATE_BREADCRUMBS:
-            return Breadcrumbs(action.payload);
+            return breadcrumbs(action.payload);
         case CREATE_DATA_NOT_FOUND:
         default:
-            return DataNotFound()
+            return dataNotFound()
     }
 }

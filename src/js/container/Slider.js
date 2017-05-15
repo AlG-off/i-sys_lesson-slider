@@ -113,7 +113,7 @@ export default class Slider {
                     classes.CLASS_BOUNCE_IN_LEFT,
                     classes.CLASS_BOUNCE_IN_VISIBLE
                 );
-
+                //TODO: избавиться от setTimeout. Перейти на обработку TransitionEvent
                 setTimeout(()=> {slides[prevSlide].classList.remove(classes.CLASS_SLIDE_VISIBLE)}, 500);
                 break;
             case 'fadeOut':
@@ -133,7 +133,7 @@ export default class Slider {
                     slides[prevSlide].classList.add(classes.CLASS_ZOOM_OUT_RIGHT);
                     slides[currentSlide].classList.add(classes.CLASS_ZOOM_IN_LEFT);
                 }
-
+                //TODO: избавиться от setTimeout. Перейти на обработку TransitionEvent
                 setTimeout(()=> {
                     slides[prevSlide].classList.remove(
                         classes.CLASS_SLIDE_VISIBLE,

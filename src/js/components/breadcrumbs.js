@@ -4,7 +4,7 @@ import {
     CLASS_BREADCRUMBS_ITEM_ACTIVE
 } from '../constants/classNames';
 
-export default function createBreadcrumbs({amount, listener}) {
+export default function breadcrumbs({amount, listener}) {
     const breadcrumbsContainer = document.createElement('div');
 
     for (let i = 0; i < amount; i++) {

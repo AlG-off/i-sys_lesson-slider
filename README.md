@@ -10,6 +10,10 @@ alGSlider.js
 ```html
 <script type="text/javascript" src="/alGSlider.js"></script>
 ```
+или
+```html
+<script type="text/javascript" src="https://cdn.rawgit.com/AlG-off/i-sys_lesson-slider/develop/alGSlider.js"></script>
+```
 
 ## HTML
 alGSlider.js работает с любыми элементами `inline`, `inline-block` или `block`.
@@ -34,10 +38,9 @@ alGSlider.js работает с любыми элементами `inline`, `in
   <div>coconut</div>
 </div>
 ```
-любые допустимые html-разметки для создания трех разных слайдеров. 
 
 ## Javascript
-После подключения `alGSlider.js` глобальный объект `alGSlider` доступен для вызова. Самый быстрый способ создания слайдера:
+После подключения `alGSlider.js` глобальный метод `alGSlider` доступен для вызова. Самый быстрый способ создания слайдера:
 
 ```javascript
 alGSlider('sliderId');
@@ -64,10 +67,10 @@ alGSlider('sliderId', {
 
 | Parameter     | Type      | Default    | Description                                                                   |
 | ------------- |:---------:|:----------:| -----------------------------------------------------------------------------:|
-| `urls`        | _array_   | no-op      | Массив с url на картинку. На их основе создаются слайды с картинкамию.        | 
+| `urls`        | _array_   | no-op      | Массив с url(ссылка на картинку). На их основе создаются слайды.              | 
 | `breadcrumbs` | _bool_    | true       | Показать или скрыть breadcrumbs. `true` or `false`.                           |
 | `controls`    | _bool_    | true       | Показать или скрыть элементы управления(стрелки).`true` or `false`.           |
-| `delay`       | _number_  | 0          | Задержка автопокрутки сайдов в ms. Если `0` автопрокрутка тключена            |
+| `delay`       | _number_  | 0          | Задержка автопокрутки сайдов в ms. Если `0` автопрокрутка отключена.          |
 | `transition`  | _string_  | none       | Эффект перехода слайда. `none`, `fadeOut`, `bounceIn`, or `zoomInOut`.        |
 
 ## License
